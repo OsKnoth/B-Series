@@ -18,7 +18,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{lscape}
-\author{Oswald Knoth}
+\author{Oswald Knoth, J\"org Wensch}
 \title{B-Series and Split-Explicit Methods}
 %\setbeamercovered{transparent} 
 %\setbeamertemplate{navigation symbols}{} 
@@ -438,6 +438,7 @@ for tree={grow=90,s sep=1.5pt,l=1pt},
 \newtheorem{satz}{Theorem}[section]
 
 \begin{document}
+\maketitle
 %\newcommand[0]{\Si0L}{\sum_{j=1}^{i-1}a_\{ij}^{[0]}[\lambda]}
 %\newcommand{\Si0L}{sum}
 
@@ -449,12 +450,13 @@ MISB-Series is a FORTRAN program to compute order conditions for a class of one 
 \begin{align*}
 y' & = F(y,y) \hspace{3cm} 
 \end{align*}
-where the right hand depends twice on the unknown $y$. This form of the right hand side involves a large number of ODE's for which special splitting typed integrator are proposed. We list types of equations which appear in the literature.
+where the right hand side depends twice on the unknown $y$. This form of the right hand side involves a large number of ODE's for which special splitting typed integrator are proposed. We list types of equations which appear in the literature.
 
-Other types of partitioning 
-Additive splitting:
+\noindent Other types of partitioning 
+
+\noindent Additive splitting:
 \begin{align*}
-y' & = F(y,y) =f(y)+f(y)
+y' & = F(y,y) =f(y)+g(y)
 \end{align*}
 Additive nonlinear-linear splitting:
 \begin{align*}
@@ -532,38 +534,35 @@ b^{\lambda}(t) & = b_0(t)+\lambda b_1(t)+\lambda^2 b_2(t)+\ldots
 % \end{align*}
 The internal variables are expanded into series by
 \begin{align}
-Y_i=&B(\eta_i,hf,y,y):=\sum_{t\in T_y} \eta_i(t) \frac{h^{\rho(t)}}{\sigma(t)}G_F(t)(y,y)\\
-Z_i(\lambda)=&C(\zeta^{\lambda}_i,hf,y,z):=\sum_{t\in T_w} \zeta^{\lambda}_i(t) \frac{h^{\rho(t)}}{\sigma(t)} G_F(t)(y,z)\\
+Y_i=&B(\eta_i,hF,y,y):=\sum_{t\in T^b} \eta_i(t) \frac{h^{\rho(t)}}{\sigma(t)}G_F(t)(y,y)\\
+Z_i(\lambda)=&C(\zeta^{\lambda}_i,hF,y,z):=\sum_{t\in T^w} \zeta^{\lambda}_i(t) \frac{h^{\rho(t)}}{\sigma(t)} G_F(t)(y,z)\\
 \end{align}
-The series coefficients $\eta_i$  map $T_w$ to $\real$, where the $\zeta_i^{\lambda}$ maps to polynomials over $\real$. Alternatively, we can interpret the B series defined by $\zeta_i$ being dependent on a parameter.
-Note, that we have $\eta_i(\emptyset)=\zeta_i^{\lambda}(\emptyset)=1$.  
+The series coefficients $\eta_i$  map $T^b$ to $\real$, where the $\zeta_i^{\lambda}$ maps $T^b$  to polynomials over $\real$. Alternatively, we can interpret the B series defined by $\zeta^{\lambda}_i$ being dependent on a parameter.
+Note, that we have $\eta_i(\emptyset)=\zeta^{\lambda}_i(\emptyset)=1$.  
  
- We consider the expansion of $hf(Y,Z)$ in a B-series when $Y, Z$ are given by B-series with coefficents $\eta, \zeta^{\lambda}$ whereas always $\eta(\emptyset)=\zeta(\emptyset)=1$.
-The resulting B-series is denoted by $D(\eta,\zeta)$.
+ We consider the expansion of $hF(Y,Z)$ in a B-series when $Y, Z$ are given by B-series with coefficents $\eta, \zeta^{\lambda}$ whereas always $\eta(\emptyset)=\zeta(\emptyset)=1$.
+The resulting B-series is denoted by $D(\eta,\zeta^{\lambda})$.
 \begin{satz}
 For a tree $t= [t_{b1}\ldots t_{bk},t_{w1}\ldots t_{wl}]_b$ we have
 \begin{align}
-hf(Y,Z)=&C(D(\eta, \zeta^{\lambda}),hf,y,z)
+hF(Y,Z)=&C(D(\eta, \zeta^{\lambda}),hF,y,z)
 \end{align}
 whereas 
 \begin{align}
 D(\eta, \zeta))(t)=&\prod_i \eta(t_{bi}) \prod_j \zeta^{\lambda}(t_{wj})
 \end{align}
 \end{satz}
-The proof requires only an exact calculation of the occurence of the tree $t$ in the Taylor expansion of $hf$.
+The proof requires only an exact calculation of the occurence of the tree $t$ in the Taylor expansion of $hF$.
 
 Proof:
-We denote by $f^{(n)}$ the full tensor representing the $n$-th derivative of $f$ with respect to a vectorial column variable $(Y;Z)$, whereas we denote by $f^{(k,l)}$  the tensor 
-denoting a derivative of $k$-times derivation with respect to $Y$, and $l$ times derivation with respect to $Z$, thus
-excepting
-exactly $k$ arguments from the $Y$-part and exactly $l$ arguments with respect to the $Z$-part.
+We denote by $F^{(n)}$ the full tensor representing the $n$-th derivative of $f$ with respect to a vectorial column variable $(Y;Z)$. 
 \begin{align*}
-hf(Y,Z)=&hf(y,z)+h\sum_{n=1}^{\infty} \frac{1}{n!} f^{(n)}\left[\begin{pmatrix} Y-y \\ Z-z \end{pmatrix},\dots \right]\\
-=&hf(y,z)+h\sum_{n=1}^{\infty} \sum_{k=0}^n   \frac{1}{n!} \begin{pmatrix} n\\ k \end{pmatrix}   f^{(k,n-k)}\left[Y-y, \dots;  Z-z, \dots \right]\\
-%=&hf(y,z)+h\sum_{n=1}^{\infty} \sum_{k=0}^n   \frac{1}{n!} \begin{pmatrix} n\\ k \end{pmatrix}   f^{(k,n-k)}\left[Y-y, \dots;  Z-z, \dots \right]\\
-=&hf(y,z)+h\sum_{n=1}^{\infty} \sum_{k=0}^n   \frac{1}{k! (n-k)!}   f^{(k,n-k)}\left[Y-y, \dots;  Z-z, \dots \right]\\
+hF(Y,Z)=&hF(y,z)+h\sum_{n=1}^{\infty} \frac{1}{n!} F^{(n)}\left[\begin{pmatrix} Y-y \\ Z-z \end{pmatrix},\dots \right]\\
+=&hF(y,z)+h\sum_{n=1}^{\infty} \sum_{k=0}^n   \frac{1}{n!} \begin{pmatrix} n\\ k \end{pmatrix}   F^n_{(k,n-k)}\left[Y-y, \dots;  Z-z, \dots \right]\\
+%=&hF(y,z)+h\sum_{n=1}^{\infty} \sum_{k=0}^n   \frac{1}{n!} \begin{pmatrix} n\\ k \end{pmatrix}   F^n_{(k,n-k)}\left[Y-y, \dots;  Z-z, \dots \right]\\
+=&hF(y,z)+h\sum_{n=1}^{\infty} \sum_{k=0}^n   \frac{1}{k! (n-k)!}   F^n_{(k,n-k)}\left[Y-y, \dots;  Z-z, \dots \right]\\
 \end{align*}
-Now assume we want to count the number of occurrences of a tree $t=[t_{b1},\dots, t_{bk}, t_{w1},\dots, t_{wl}]$ where $t_{b1},\dots, t_{bk} \in T_b$, $t_{w1},\dots, t_{wl}l\in T_w$.
+Now assume we want to count the number of occurrences of a tree $t=[t_{b1},\dots, t_{bk}, t_{w1},\dots, t_{wl}]$ where $t_{b1},\dots, t_{bk} \in T^b$, $t_{w1},\dots, t_{wl}\in Tw$.
 Assume that the multiplicities in which children trees occur  are $\mu_1,\dots, \mu_r$. Then, such a tree occurs in the Taylor expansion exactly
 \[ \frac{k! l!}{\mu_1!\cdot \dots\cdot \mu_r!} \]
 times. If all subtrees are distinct we have $k! l!$ occurrences, but for each multiple occurrence $\mu_i$ we have to deduct a factor $1/\mu_i!$.
@@ -587,7 +586,7 @@ The algorithm below computes the series coefficients for an algorithm where we h
 \FOR{$j=1$ \TO $i-1$}
 \STATE  $r_{ij}^\lambda=1$
 \FOR{$s \in [t_1t_2\ldots t_m]$}
-\IF{$s \in T_w$}
+\IF{$s \in T^w$}
 \STATE $r_{ij}^\lambda=r_{ij}^\lambda*\zeta_{i,\lambda}(s)$ Comment: Polynomial multiplication
 \ELSE
 \STATE $r_{ij}^\lambda=r_{ij}^\lambda*\eta_j(s)$ Comment: Scalar multiplication
@@ -882,7 +881,7 @@ Algorithm:
 \FOR{$j=1$ \TO $i-1$}
 \STATE  $r_{ij}^\lambda=1$
 \FOR{$s \in [t_1t_2\ldots t_m]$}
-\IF{$s \in T_w$}
+\IF{$s \in T^w$}
 \STATE $r_{ij}^\lambda=r_{ij}^\lambda*\zeta_{i,\lambda}(s)$ Comment: Polynomial multiplication
 \ELSE
 \STATE $r_{ij}^\lambda=r_{ij}^\lambda*\eta_j(s)$ Comment: Scalar multiplication

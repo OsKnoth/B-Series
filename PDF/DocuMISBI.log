@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.1.18)  17 JUL 2020 22:00
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.1.18)  18 JUL 2020 17:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1176,48 +1176,48 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 ABD: EveryShipout initializing macros
-LaTeX Font Info:    Try loading font information for U+msa on input line 449.
+LaTeX Font Info:    Try loading font information for U+msa on input line 441.
 
 (/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 449.
+LaTeX Font Info:    Try loading font information for U+msb on input line 441.
 
 (/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Overfull \hbox (17.86804pt too wide) in paragraph at lines 519--519
+Overfull \hbox (17.86804pt too wide) in paragraph at lines 521--521
 [] 
  []
 
-[2]
-Overfull \hbox (56.98427pt too wide) in paragraph at lines 565--568
+[2] [3]
+Overfull \hbox (56.98427pt too wide) in paragraph at lines 564--567
 \T1/cmr/m/n/10 Now as-su-me we want to count the num-ber of oc-cur-rences of a 
 tree $\OML/cmm/m/it/10 t \OT1/cmr/m/n/10 = [\OML/cmm/m/it/10 t[]; [] ; t[]; t[]
 ; [] ; t[]\OT1/cmr/m/n/10 ]$
  []
 
-[3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18]
-Overfull \hbox (32.02928pt too wide) in paragraph at lines 945--945
+[4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18]
+Overfull \hbox (32.02928pt too wide) in paragraph at lines 944--944
 [] 
  []
 
 [19] [20]
 
-LaTeX Warning: Command \o invalid in math mode on input line 967.
+LaTeX Warning: Command \o invalid in math mode on input line 966.
 
 Missing character: There is no ø in font cmr10!
 
-Overfull \hbox (15.81097pt too wide) in paragraph at lines 952--970
+Overfull \hbox (15.81097pt too wide) in paragraph at lines 951--969
 [][] 
  []
 
 [21
 
 ]
-Overfull \hbox (33.6246pt too wide) in paragraph at lines 973--983
+Overfull \hbox (33.6246pt too wide) in paragraph at lines 972--982
 [][] 
  []
 
@@ -1225,7 +1225,7 @@ Overfull \hbox (33.6246pt too wide) in paragraph at lines 973--983
 
 
 ]
-Overfull \hbox (81.52448pt too wide) in paragraph at lines 986--1000
+Overfull \hbox (81.52448pt too wide) in paragraph at lines 985--999
 [][] 
  []
 
@@ -1233,17 +1233,17 @@ Overfull \hbox (81.52448pt too wide) in paragraph at lines 986--1000
 
 
 ]
-Overfull \hbox (31.7152pt too wide) in paragraph at lines 1002--1014
+Overfull \hbox (31.7152pt too wide) in paragraph at lines 1001--1013
 [][] 
  []
 
 
-Overfull \hbox (33.69969pt too wide) in paragraph at lines 1016--1026
+Overfull \hbox (33.69969pt too wide) in paragraph at lines 1015--1025
 [][] 
  []
 
 
-Overfull \hbox (28.41037pt too wide) in paragraph at lines 1029--1039
+Overfull \hbox (28.41037pt too wide) in paragraph at lines 1028--1038
 [][] 
  []
 
@@ -1251,11 +1251,11 @@ Overfull \hbox (28.41037pt too wide) in paragraph at lines 1029--1039
 
 ] [25] (./DocuMISBI.aux) ) 
 Here is how much of TeX's memory you used:
- 30695 strings out of 493014
- 689050 string characters out of 6133351
- 739663 words of memory out of 5000000
- 33854 multiletter control sequences out of 15000+600000
- 9107 words of font info for 27 fonts, out of 8000000 for 9000
+ 30730 strings out of 493014
+ 689426 string characters out of 6133351
+ 739306 words of memory out of 5000000
+ 33878 multiletter control sequences out of 15000+600000
+ 15284 words of font info for 47 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  137i,15n,177p,10383b,1787s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2016/texmf-dist/fonts/enc/dvips/c
@@ -1272,12 +1272,13 @@ y7.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/symbols/
 msbm10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfbx
 1000.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfbx14
 40.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfrm1000
-.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfti1000.p
-fb>
-Output written on DocuMISBI.pdf (25 pages, 207827 bytes).
+.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfrm1200.p
+fb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb
+></usr/local/texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb>
+Output written on DocuMISBI.pdf (25 pages, 233289 bytes).
 PDF statistics:
- 146 PDF objects out of 1000 (max. 8388607)
- 103 compressed objects within 2 object streams
+ 154 PDF objects out of 1000 (max. 8388607)
+ 109 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
