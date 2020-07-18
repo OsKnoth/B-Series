@@ -1,0 +1,9 @@
+&Control
+dInsert=.FALSE.
+gInsert=.FALSE.
+pMaximum=4
+! MISName
+  MISName='CKRK54'
+nStageSym=4
+nPhiSym=1
+/END

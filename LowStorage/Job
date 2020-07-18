@@ -1,0 +1,11 @@
+../BiColourTreeMISBI ControlBWRRK33.dat | tee ErgBWRRK33
+../BiColourTreeMISBI ControlCKRK54.dat  | tee ErgCKRK54
+../BiColourTreeMISBI ControlHALERK64.dat  | tee ErgHALERK64
+../BiColourTreeMISBI ControlHALERK74.dat  | tee ErgHALERK74
+../BiColourTreeMISBI ControlNDBRKF124.dat  | tee ErgNDBRKF124
+../BiColourTreeMISBI ControlNDBRKF134.dat  | tee ErgNDBRKF134
+../BiColourTreeMISBI ControlSHRK64.dat  | tee ErgSHRK64
+../BiColourTreeMISBI ControlTSRKC73.dat  | tee ErgTSRKC73
+../BiColourTreeMISBI ControlTSRKC84.dat  | tee ErgTSRKC84
+../BiColourTreeMISBI ControlTSRKF84.dat  | tee ErgTSRKF84
+../BiColourTreeMISBI ControlYRK1351.dat | tee ErgYRK1351

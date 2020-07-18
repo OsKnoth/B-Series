@@ -1,0 +1,1070 @@
+\documentclass[english,unicode]{article}
+%\documentclass[11pt]{beamer}
+%\usetheme{AnnArbor}
+%\usetheme{CambridgeUS}
+%\usetheme{Pittsburgh}
+%\usetheme{Madrid}
+%\usetheme{Antibes}
+%\usetheme{}
+\usepackage[utf8]{inputenc}
+\usepackage[german]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{forest}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{lscape}
+\author{Oswald Knoth}
+\title{B-Series and Split-Explicit Methods}
+%\setbeamercovered{transparent} 
+%\setbeamertemplate{navigation symbols}{} 
+%\logo{} 
+
+ 
+\usepackage{subfigure}
+\newtheorem{theorem}{Theorem}
+\def\treea{
+\begin{forest} 
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]
+\end{forest}}
+
+\def\treeaw{
+\begin{forest} 
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]
+\end{forest}}
+
+\def\treeb{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treew{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treebwb{
+\begin{forest}
+[.,node options ={circle,fill=white,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treebbw{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treebww{
+\begin{forest}
+[.,node options ={circle,fill=white,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treec{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treecc{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treeccc{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treecwbb{
+\begin{forest}
+[.,node options ={circle,fill=white,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treed{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]]
+\end{forest}}
+
+\def\treedd{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]]
+\end{forest}}
+
+\def\treeddd{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]]
+\end{forest}}
+
+\def\treedddd{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]]
+\end{forest}}
+
+\def\treef{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treeff{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treefff{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treeffff{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treeg{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treegg{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treeggg{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treegggg{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+\end{forest}}
+
+
+\def\treeggG{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treeggGg{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treegGgg{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treeG{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]
+\end{forest}}
+
+\def\treeh{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]]
+\end{forest}}
+
+\def\treehh{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]]
+\end{forest}}
+
+\def\treehhh{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]]
+\end{forest}}
+
+\def\treehhhh{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]]
+\end{forest}}
+
+\def\treehhhhh{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]]
+\end{forest}}
+
+\def\treehhhhhh{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]]
+\end{forest}}
+
+
+\def\treei{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]]]
+\end{forest}}
+
+
+\def\treeii{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]]]
+\end{forest}}
+
+\def\treeiii{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]]]
+\end{forest}}
+
+
+\def\treeiiii{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]]]
+\end{forest}}
+
+\def\treeI{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]]]
+\end{forest}}
+
+\def\treeII{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]]]
+\end{forest}}
+
+\def\treeIII{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}]]]]
+\end{forest}}
+
+\def\treeIIII{
+\begin{forest}
+[.,node options ={circle,fill=black,draw=black,scale=0.3},
+for tree={grow=90,s sep=1.5pt,l=1pt},
+[,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=white,draw=black,scale=0.3}
+[.,node options ={circle,fill=black,draw=black,scale=0.3}]]]]
+\end{forest}}
+
+%\include{trees}
+\def\Ri{\sum_{j=1}^{i-1}r_{ij}}
+\def\Rj{\sum_{k=1}^{j-1}r_{jk}}
+\def\Rk{\sum_{l=1}^{k-1}r_{kl}}
+\def\Rl{\sum_{r=1}^{l-1}r_{lr}}
+
+\def\Di{\sum_{j=1}^{i-1}d_{ij}}
+\def\Dj{\sum_{k=1}^{j-1}d_{jk}}
+\def\Dk{\sum_{l=1}^{k-1}d_{kl}}
+\def\Dl{\sum_{r=1}^{l-1}d_{lr}}
+
+\def\SiL{\sum_{j=1}^{i-1}a_{ij}^{[0]}[\lambda]}
+\def\SjL{\sum_{k=1}^{j-1}a_{jk}^{[0]}[\lambda]}
+\def\SiIL{\sum_{j=1}^{i-1}a_{ij}^{[1]}[\lambda]}
+\def\SjIL{\sum_{k=1}^{j-1}a_{jk}^{[1]}[\lambda]}
+\def\Si{\sum_{j=1}^{i-1}a_{ij}^{[0]}}
+\def\Sj{\sum_{k=1}^{j-1}a_{jk}^{[0]}}
+\def\Sk{\sum_{l=1}^{k-1}a_{kl}^{[0]}}
+\def\Sl{\sum_{r=1}^{l-1}a_{lr}^{[0]}}
+
+
+\def\SiI{\sum_{j=1}^{i-1}a_{ij}^{[1]}}
+\def\SjI{\sum_{k=1}^{j-1}a_{jk}^{[1]}}
+\def\SkI{\sum_{l=1}^{k-1}a_{kl}^{[1]}}
+\def\SlI{\sum_{r=1}^{l-1}a_{lr}^{[1]}}
+\def\SiIO{\sum_{j=1}^{i-1}a_{ij}^{[1]}[1]}
+\def\SjIO{\sum_{k=1}^{j-1}a_{jk}^{[1]}[1]}
+\def\SkIO{\sum_{l=1}^{k-1}a_{kl}^{[1]}[1]}
+\def\SlIO{\sum_{r=1}^{l-1}a_{lr}^{[1]}[1]}
+\def\SrIO{\sum_{s=1}^{r-1}a_{rs}^{[1]}[1]}
+
+
+\def\EIL{^{[1]}[\lambda]}
+\def\EI{^{[1]}}
+\def\EIO{^{[1]}[1]}
+\def\L{[\lambda]}
+
+\def\SSi{\sum a_{ij}^{[0]}}
+\def\SSj{\sum a_{jk}^{[0]}}
+\def\SSiI{\sum a_{ij}^{[1]}}
+\def\SSjI{\sum a_{jk}^{[1]}}
+\def\SSkI{\sum a_{kl}^{[1]}}
+\def\SSiIO{\sum a_{ij}^{[1]}[1]}
+\def\SSjIO{\sum a_{jk}^{[1]}[1]}
+\def\SSkIO{\sum a_{kl}^{[1]}[1]}
+\def\SSlIO{\sum a_{lr}^{[1]}[1]}
+
+
+\newcommand{\pdn}[3]{\frac{\partial^{#3} #1}{{\partial #2}^{#3}}}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\Ord}[1]{\mathcal{O}\left(#1\right)}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\realn}[1]{\mathbb{R}^{#1}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\eins}{\mbox{1\hskip-0.24em l}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\follows}{\Rightarrow}
+%\newcommand{\beins}{\mathbf{1}}
+%\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\half}{\frac{1}{2}}
+\newtheorem{deff}{Definition}[section]
+\newtheorem{satz}{Theorem}[section]
+
+\begin{document}
+%\newcommand[0]{\Si0L}{\sum_{j=1}^{i-1}a_\{ij}^{[0]}[\lambda]}
+%\newcommand{\Si0L}{sum}
+
+
+\section{Introduction}
+
+MISB-Series is a FORTRAN program to compute order conditions for a class of one step methods where in each stage again a differential equation has to be solved. We start with the following differential equation
+
+\begin{align*}
+y' & = F(y,y) \hspace{3cm} 
+\end{align*}
+where the right hand depends twice on the unknown $y$. This form of the right hand side involves a large number of ODE's for which special splitting typed integrator are proposed. We list types of equations which appear in the literature.
+
+Other types of partitioning 
+Additive splitting:
+\begin{align*}
+y' & = F(y,y) =f(y)+f(y)
+\end{align*}
+Additive nonlinear-linear splitting:
+\begin{align*}
+y' & = F(y,y) = f(y)+Ny
+\end{align*}
+Vector fields on manifolds in frame representation
+\begin{align*}
+y' &=F (y,y)=\sum_{i=1}^Nf_i(y)E_i(y)
+\end{align*}
+Multiplicative splitting:
+\begin{align*}
+y' &=F (y,y)=A(y)y
+\end{align*}
+I all examples the first $y$ argument is the first one in the general framework, and so on. 
+
+For this type of equations exponential Runge-Kutta type methods will be analyzed. The methods have the following structure.
+
+\begin{align*}
+Y_1 & = y_n\\
+Z'_i &=\sum_{j=1}^{i-1}\sum_{p=0}^{\rho_i}a_{ij}^p\left(\frac{\tau}{h}\right)^p F(Y_j,Z_i),\quad Z_i(0)=y_n+\sum_jd_{ij}(Y_j-y_n)\\
+Y_i &  =Z_i(h),
+\end{align*}
+where in addition the consistency condition is required
+\begin{align*}
+\sum_{j=1}^{i-1} a_{ij}^p=0,\, p=1,\ldots,\rho_i.
+\end{align*}
+
+We will derive order conditions with the help of B-series. Let us start with the elementary differentials.
+We will use the abbreviation $F^{(n)}_{(i,j)},\,i+j=n$ to denote the $i$-th derivative of f with respect to the first argument and the $j$-th derivative of f with respect to the second argument.
+
+\begin{align*}
+y' & = F\\
+y'' & = F^{(1)}_{(1,0)}F+F^{(1)}_{(1,0)}F\\
+y^{(3)}& = F^{(2)}_{(2,0)}FF+2F^{(2)}_{(1,1)}FF+F^{(2)}_{(0,2)}FF\\
+& +F^{(1)}_{(1,0)}F^{(1)}_{(1,0)}F
++F^{(1)}_{(1,0)}F^{(1)}_{(0,1)}F
++F^{(1)}_{(0,1)}F^{(1)}_{(1,0)}F
++F^{(1)}_{(0,1)}F^{(1)}_{(0,1)}F
+\end{align*}
+
+
+\vspace{1cm}
+For a graphical representation we use bi-coloured trees. Black vertices means computation of $F$ at the position
+$(y,y)$ and and white vertices means computation at the position $(y,z)$. Upwards pointing branches represent
+partial derivatives with respect to the first argument if the branch leads to a black vertex, and with respect to the second argument if it leads to a white vertex.
+  
+The trees are divided in two sets $T^b$ and $T^w$ where $T^b$ contain all trees with a black root and
+ $T^w$ with a white root. Hence, the trees $T^b$ are computed at $(y,y)$ in the leading derivative whereas those of $T^w$ are computed at the mixed argument $(y,z)$. The tress  are defined recursively trough:
+\begin{align*}
+t & = [t_{b1}\ldots t_{bk},t_{w1}\ldots t_{wl}]_b, \quad \forall t \in T^b\\
+t & = [t_{b1}\ldots t_{bk},t_{w1}\ldots t_{wl}]_w, \quad \forall t \in T^w
+\end{align*}
+Furthermore we introduce the black operator $^b$ which replaces a white root node by a black root node. 
+\begin{align*}
+t^b=[t_{b1}\ldots t_{bk},t_{w1}\ldots t_{wl}]_w^b=[t_{b1}\ldots t_{bk},t_{w1}\ldots t_{wl}]_b
+\end{align*}
+\begin{align*}
+G_F( [t_{b,1}\ldots t_{b,k},t_{w1}\ldots t_{wl}]_b)(y_0,y_0) & =\\
+F^{(k+l)}_{(k,l)}(y_0,y_0)(G(t_{b1})(y_0,y_0),\ldots,G(t_{bk})(y_0,y_0),G(t_{w1}^b)(y_0,y_0),\ldots,G(t_{wl}^b)(y_0,y_0))\\
+G_F([t_{b,1}\ldots t_{b,k},t_{w1}\ldots t_{wl}]_w)(y_0,z_0) & = \\
+F^{(k+l)}_{(k,l)}(y_0,y_0)(G(t_{b1})(y_0,y_0),\ldots,G(t_{bk})(y_0,y_0),G(t_{w1})(y_0,z_0),\ldots,G(t_{wl})(y_0,z_0))\\
+\end{align*}
+Two types of formal B-series are introduced
+\begin{align*}
+B(a,hF,y,y) & = a(\emptyset)y+\sum_{t\in T^b} \frac{a(t)}{\sigma(t)}G_F(t)(y,y)h^{r(t)}\\
+C(b,hF,\lambda,y,z) & = b(\emptyset)z+\sum_{t\in T^w} \frac{b^{\lambda}(t)}{\sigma(t)}G_F(t)(y,z)h^{r(t)}
+\end{align*}
+where the coefficients $b^{\lambda}(t)$ of the second B-series  are polynomials in a further parameter $\lambda$
+\begin{align*}
+b^{\lambda}(t) & = b_0(t)+\lambda b_1(t)+\lambda^2 b_2(t)+\ldots
+\end{align*}
+%Development of $hF(y+B(a,hF,y,y) ,z+C(b,hF,\lambda,y,z))$ in a Taylor series yields
+% \begin{align*}
+% hF(y,z)+ h\sum_{m=1}^\infty \sum_{k=0}^m\frac{1}{m!}F^m_{(k,m-k)}(y,z)(& B(a,hF,y,y),\ldots,B(a,hF,y,y),\\ & C(b,hF,\lambda,y,z),\ldots,C(b,hF,\lambda,y,z))
+% \end{align*}
+The internal variables are expanded into series by
+\begin{align}
+Y_i=&B(\eta_i,hf,y,y):=\sum_{t\in T_y} \eta_i(t) \frac{h^{\rho(t)}}{\sigma(t)}G_F(t)(y,y)\\
+Z_i(\lambda)=&C(\zeta^{\lambda}_i,hf,y,z):=\sum_{t\in T_w} \zeta^{\lambda}_i(t) \frac{h^{\rho(t)}}{\sigma(t)} G_F(t)(y,z)\\
+\end{align}
+The series coefficients $\eta_i$  map $T_w$ to $\real$, where the $\zeta_i^{\lambda}$ maps to polynomials over $\real$. Alternatively, we can interpret the B series defined by $\zeta_i$ being dependent on a parameter.
+Note, that we have $\eta_i(\emptyset)=\zeta_i^{\lambda}(\emptyset)=1$.  
+ 
+ We consider the expansion of $hf(Y,Z)$ in a B-series when $Y, Z$ are given by B-series with coefficents $\eta, \zeta^{\lambda}$ whereas always $\eta(\emptyset)=\zeta(\emptyset)=1$.
+The resulting B-series is denoted by $D(\eta,\zeta)$.
+\begin{satz}
+For a tree $t= [t_{b1}\ldots t_{bk},t_{w1}\ldots t_{wl}]_b$ we have
+\begin{align}
+hf(Y,Z)=&C(D(\eta, \zeta^{\lambda}),hf,y,z)
+\end{align}
+whereas 
+\begin{align}
+D(\eta, \zeta))(t)=&\prod_i \eta(t_{bi}) \prod_j \zeta^{\lambda}(t_{wj})
+\end{align}
+\end{satz}
+The proof requires only an exact calculation of the occurence of the tree $t$ in the Taylor expansion of $hf$.
+
+Proof:
+We denote by $f^{(n)}$ the full tensor representing the $n$-th derivative of $f$ with respect to a vectorial column variable $(Y;Z)$, whereas we denote by $f^{(k,l)}$  the tensor 
+denoting a derivative of $k$-times derivation with respect to $Y$, and $l$ times derivation with respect to $Z$, thus
+excepting
+exactly $k$ arguments from the $Y$-part and exactly $l$ arguments with respect to the $Z$-part.
+\begin{align*}
+hf(Y,Z)=&hf(y,z)+h\sum_{n=1}^{\infty} \frac{1}{n!} f^{(n)}\left[\begin{pmatrix} Y-y \\ Z-z \end{pmatrix},\dots \right]\\
+=&hf(y,z)+h\sum_{n=1}^{\infty} \sum_{k=0}^n   \frac{1}{n!} \begin{pmatrix} n\\ k \end{pmatrix}   f^{(k,n-k)}\left[Y-y, \dots;  Z-z, \dots \right]\\
+%=&hf(y,z)+h\sum_{n=1}^{\infty} \sum_{k=0}^n   \frac{1}{n!} \begin{pmatrix} n\\ k \end{pmatrix}   f^{(k,n-k)}\left[Y-y, \dots;  Z-z, \dots \right]\\
+=&hf(y,z)+h\sum_{n=1}^{\infty} \sum_{k=0}^n   \frac{1}{k! (n-k)!}   f^{(k,n-k)}\left[Y-y, \dots;  Z-z, \dots \right]\\
+\end{align*}
+Now assume we want to count the number of occurrences of a tree $t=[t_{b1},\dots, t_{bk}, t_{w1},\dots, t_{wl}]$ where $t_{b1},\dots, t_{bk} \in T_b$, $t_{w1},\dots, t_{wl}l\in T_w$.
+Assume that the multiplicities in which children trees occur  are $\mu_1,\dots, \mu_r$. Then, such a tree occurs in the Taylor expansion exactly
+\[ \frac{k! l!}{\mu_1!\cdot \dots\cdot \mu_r!} \]
+times. If all subtrees are distinct we have $k! l!$ occurrences, but for each multiple occurrence $\mu_i$ we have to deduct a factor $1/\mu_i!$.
+Taken into consideration the recursion formula for the expressions $\sigma(t)$, we end up with the proposition
+\begin{align}
+D(\eta, \zeta^{\lambda}))(t)=&\prod_i \eta(t_{bi}) \prod_j \zeta^{\lambda}(t_{wj})
+\end{align}
+
+
+
+
+
+The algorithm below computes the series coefficients for an algorithm where we have no shift in the initial conditions.
+
+\begin{algorithm}
+\caption{Calculate series coefficient for tree $t=[t_1t_2\ldots t_m]_w$}
+\begin{algorithmic}
+\STATE $t=[t_1t_2\ldots t_m]_w$
+\FOR{$i=1$ \TO $ns+1$} 
+\STATE $\phi_i^\lambda=0$
+\FOR{$j=1$ \TO $i-1$}
+\STATE  $r_{ij}^\lambda=1$
+\FOR{$s \in [t_1t_2\ldots t_m]$}
+\IF{$s \in T_w$}
+\STATE $r_{ij}^\lambda=r_{ij}^\lambda*\zeta_{i,\lambda}(s)$ Comment: Polynomial multiplication
+\ELSE
+\STATE $r_{ij}^\lambda=r_{ij}^\lambda*\eta_j(s)$ Comment: Scalar multiplication
+\ENDIF
+\ENDFOR
+\FOR{$p=0$ \TO $\rho_i$}
+\STATE $\phi_i^\lambda=\phi_i^\lambda+a_{ijp}\lambda^p*r_{ij}^\lambda$
+\ENDFOR
+\ENDFOR
+\STATE Integrate $\frac{d}{d\lambda}\zeta_i^\lambda(t))=\phi_i^\lambda $
+\STATE $\zeta^{\lambda 0}_i(t)=0$
+\STATE $\eta_i(t^b)=\zeta^{1}_{i}(t)$ 
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\section{Series coefficients}
+Let us compute the first coefficients of both series and the intermediate series $\phi$ for all stages. 
+%We will present two version. In the first version the simplified conditions are applied as often as possible. The second version makes no further assumption with respect to the coefficients.
+In addition to the standard case we also add the differentials for general additive splitting and linear additive splitting.
+
+For a compact notification we define also
+\begin{align*}
+a_{ij}^{[0]}[\lambda] & = \sum_{p=0}^{\rho_i}a_{ij}^p\frac{p!}{(p+0)!}\lambda^{p+0}\\
+a_{ij}^{[1]}[\lambda] & = \sum_{p=0}^{\rho_i}a_{ij}^p\frac{p!}{(p+1)!}\lambda^{p+1}\\
+a_{ij}^{[m]}[\lambda] & = \sum_{p=0}^{\rho_i}a_{ij}^p\frac{p!}{(p+m)!}\lambda^{p+m}\\
+\end{align*}
+A further notation is the product of polynomial
+\begin{align*}
+(qr)[\lambda]=q[\lambda]  r[\lambda] = &(\sum_{p=0}^{\rho_1} q^p \lambda^p)(\sum_{p=0}^{\rho_2} r^p \lambda^p)\\
+  = &  q^{\rho_1}p^{\rho_2}\lambda^{\rho_1+\rho_2}\\
+ + & (q^{\rho_1}r^{\rho_2-1}+q^{\rho_1-1}r^{\rho_2})\lambda^{\rho_1+\rho_2-1}\\
+  + & (q^{\rho_1}r^{\rho_2-2}+q^{\rho_1-1}r^{\rho_2-1}+q^{\rho_1-1}r^{\rho_2-1})\lambda^{\rho_1+\rho_2-2}\\
+  + &\ldots \\
+   + & (q^{0}r^{1}+q^{1}r^{0})\lambda^1\\
+  + & q^{0}r^{0}\lambda^0\\
+ = & \sum_{p=0}^{\rho_1+\rho_2}(\sum_{s=0}^{k} q^{l}r^{p-s})\lambda^{p}
+\end{align*}
+where $q^p$ is zero whenever  $p\not\in [0,\rho_1]$, resp. $r^p$ is zero whenever  $p\not\in [0,\rho_2]$.
+
+$$
+(qr)^p=\sum_{s=0}^{p}q^{s}q^{p-s}
+$$
+
+First order:
+
+Differential 1, $F$,  $F$ , N:
+\begin{align*}
+r_{ij}^\lambda(\tau_w) &=1\\
+\phi_i^\lambda(\tau_w) & = \SiL\\
+\zeta_i^\lambda(\tau_w) & = \SiIL\\
+\eta_i(\tau_b) & = \SiIO\\
+\eta_j(\tau_b) & =\SjIO\\
+\end{align*}
+
+\newpage
+Second order:
+
+Differential 2, $F^{(1)}_{(1,0)}F$, $f'F$, $N'N$:
+\begin{align*}
+r_{ij}^\lambda([\tau_b]_w) &=\eta_j^\lambda (\tau_b)=\SjIO\\\
+\phi_i^\lambda([\tau_b]_w) & = \SiL r_{ij}^\lambda ([\tau_b]_w)\\
+& = \SiL \SjIO \\
+\zeta_i^\lambda([\tau_b]_w) &=\SiIL \SjIO \\
+\eta_i([\tau_b]_b) &=\SiIO \SjIO\\
+\eta_j([\tau_b]_b) &=\SjIO \SkIO\\
+\end{align*}
+
+Differential 3, $F^{(1)}_{(0,1)}F$, $g'F$, $LN$:
+\begin{align*}
+r_{ij}^\lambda([\tau_w]_w) &=\zeta_i(\tau_w)=\SiIL \\
+\phi_i^\lambda([\tau_w]_w) &= \SiL r_{ij}^\lambda ([\tau_w]_w)\\
+& = \SiL \SiIL\\\
+\zeta_i^\lambda([\tau_w]_w) &= (\Si \SjI )\EIL \\
+\eta_i([\tau_w]_b) &=(\Si \SjI )\EIO \\
+\eta_j([\tau_w]_b) &=(\Sj \SkI)\EIO \\
+\end{align*}
+
+\newpage
+Third order:
+
+Differential 4, $F^{(2)}_{(2,0)}FF$, $f''FF$, $N''NN$ :
+\begin{align*}
+r_{ij}^\lambda([\tau_b,\tau_b]_w) & = (\eta_j(\tau_b))^2=( \SjIO)^2\\
+\phi_i^\lambda([\tau_b,\tau_b]_w) &= \SiL r_{ij}^\lambda ([\tau_b,\tau_b]_w)\\
+& = \SiL( \SjIO)^2\\
+\zeta_i^\lambda([\tau_b,\tau_b]_w) &= \SiIL ( \SjIO)^2\\
+\eta_i([\tau_b,\tau_b]_b)) &=\SiIO ( \SjIO)^2\\
+\eta_j([\tau_b,\tau_b]_b)) &=\SjIO ( \SkIO)^2\\
+\end{align*}
+
+Differential 5, $F^{(2)}_{(1,1)}FF$:
+\begin{align*}
+r_{ij}^\lambda([\tau_w,\tau_b]_w & =\zeta_i^\lambda(\tau_w) \eta_j(\tau_b)= ( \SiIL)(\SjIO)\\
+\phi_i^\lambda([\tau_w,\tau_b]_w) &= \SiL r_{ij}^\lambda ([\tau_w,\tau_b]_w)\\
+& = (\SiIL) (\SiL\SjIO) \\
+& = ((\SiI) (\Si\SjIO))\L\\
+\zeta_i^\lambda([\tau_w,\tau_b]_w) & =((\SiI) (\Si\SjIO))\EIL\\
+\eta_i([\tau_w,\tau_b]_b)) & = ((\SiI) (\Si\SjIO))\EIO\\
+\eta_j([\tau_w,\tau_b]_b)) & = ((\SjI) (\Sj\SkIO))\EIO\\
+\end{align*}
+
+Differential 6, $F^{(2)}_{(0,2)}FF$, $g''FF$:
+\begin{align*}
+r_{ij}^\lambda([\tau_w,\tau_w]_w)& =(\zeta_i^\lambda(\tau_w))^2= (\SiIL)^2\\
+\phi_i^\lambda([\tau_w,\tau_w]_w) &= \SiL ([\tau_w,\tau_w]_w)\\
+& = \SiL(\SiIL)^2\\
+\zeta_i^\lambda([\tau_w,\tau_w]_w) &=(\Si(\SiI)^2)\EIL\\
+\eta_i([\tau_w,\tau_w]_b)) &=(\Si(\SiI)^2)\EIO\\
+\eta_j([\tau_w,\tau_w]_b)) &=(\Sj(\SjI)^2)\EIO
+\end{align*}
+
+
+%[[\tau_b]_b]_b
+Differential 7, $F^{(1)}_{(1,0)}F^{(1)}_{(1,0)}F$, $f'f'F$ , $N'N'N$:
+\begin{align*}
+r_{ij}^\lambda([[\tau_b]_b]_w)& =\eta_j([\tau_b]_b)= \SjIO \SkIO \\
+\phi_i^\lambda([[\tau_b]_b]_w) &= \SiL r_{ij}^\lambda ([[\tau_b]_b]_w)\\
+& = \SiL \SjIO \SkIO \\
+\zeta_i^\lambda([[\tau_b]_b]_w) &=\SiIL \SjIO \SkIO \\
+\eta_i([[\tau_b]_b]_b)) &=\SiIO \SjIO \SkIO
+\end{align*}
+
+Differential 8, $F^{(1)}_{(1,0)}F^{(1)}_{(0,1)}F$, $f'g'F$, $N'LN$:
+\begin{align*}
+r_{ij}^\lambda([[\tau_w]_b]_w)& =\eta_j([\tau_w]_b)= (\Sj \SkI)\EIO \\
+\phi_i^\lambda([[\tau_w]_b]_w) &= \SiL r_{ij}^\lambda ([[\tau_w]_b]_w)\\
+& = \SiL (\Si \SjI)\EIO\\
+\zeta_i^\lambda([[\tau_w]_b]_w)& = \SiIL (\S \SkI)\EIO\\
+\eta_i([[\tau_w]_b]_b)& = \SiIO (\Sj \SkI)\EIO\\
+\eta_j([[\tau_w]_b]_b)& =\SjIO (\Sk \SlI)\EIO
+\end{align*}
+
+%[[\tau_b]_w]_b
+Differential 9, $LN'N$:
+\begin{align*}
+r_{ij}^\lambda([[\tau_b]_w]_w)& =\zeta_i^\lambda([[\tau_b]_w])=\SiIL \SjIO\\
+\phi_i^\lambda([[\tau_b]_w]_w)) &= \SiL r_{ij}^\lambda ([[\tau_b]_w]_w))\\
+&=\SiL \SiIL \SjIO\\
+\zeta_i^\lambda([[\tau_b]_w]_w)& =(\Si \SiI \SjIO)\EIL\\
+\eta_i([[\tau_b]_w]_b)& = (\Si \SiI \SjIO)\EIO\\
+\eta_j([[\tau_b]_w]_b)& =(\Sj \SjI\SkIO)\EIO\\
+\end{align*}
+
+Differential 10, $F^{(1)}_{(0,1)}F^{(1)}_{(0,1)}F$, $g'g'F$, $LLN$:
+%[[\tau_w]_w]_b
+\begin{align*}
+r_{ij}^\lambda([[\tau_w]_w]_w)& =\zeta_i^\lambda([\tau_w]_w)=(\Si \SjI )\EIL\\
+\phi_i^\lambda([[\tau_w]_w]_w) &= \SiL r_{ij}^\lambda ([[\tau_w]_w]_w))\\
+&= \SiL (\Si \SjI )\EIL\\
+\zeta_i^\lambda([[\tau_w]_w]_w)& =(\Si (\Si \SjI )\EI)\EIL \\
+\eta_i([[\tau_w]_w]_b)& = (\Si (\Si \SjI )\EI)\EIO\\
+\eta_j([[\tau_w]_w]_b)& = (\Sj (\Sj \SkI )\EI)\EIO
+\end{align*}
+
+Fourth order:
+
+Differential 11, $F^{(3)}_{(3,0)}FFF$, $f'''FFF$, $N'''NNN$:
+ % [\tau_b,\tau_b,\tau_b]_b$ 
+\begin{align*}
+r_{ij}^\lambda([\tau_b,\tau_b,\tau_b]_w)& =(\eta_j(\tau_b))^3=(\SiIO)^3\\
+\phi_i^\lambda([\tau_b,\tau_b,\tau_b]_w) &= \SiL r_{ij}^\lambda ([\tau_b,\tau_b,\tau_b]_w))\\
+&= \SiL (\SiIO)^3\\
+\zeta_i^\lambda([\tau_b,\tau_b,\tau_b]_w)& = \SiIL (\SiIO)^3 \\
+\eta_i([\tau_b,\tau_b,\tau_b]_b)& = (\SiIO)^4\\
+\eta_j([\tau_b,\tau_b,\tau_b]_b)& = (\SjIO)^4
+\end{align*}
+
+Differential 12, $F^{(3)}_{(2,1)}FFF$:
+%[\tau_b,\tau_b,\tau_w]_b
+%\zeta_i^\lambda(\tau_w) & = \SiIL
+\begin{align*}
+r_{ij}^\lambda([\tau_b,\tau_b,\tau_w]_w)& =\zeta_i^\lambda(\tau_w)(\eta_j(\tau_b))^2=\SiIL(\SiIO)^2\\
+\phi_i^\lambda([\tau_b,\tau_b,\tau_w]_w) &= \SiL r_{ij}^\lambda ([\tau_b,\tau_b,\tau_w]_w))\\
+&= \SiL\SiIL(\SiIO)^2\\
+\zeta_i^\lambda([\tau_b,\tau_b,\tau_w]_w)& = (\Si\SiI)\EIL(\SiIO)^2 \\
+\eta_i([\tau_b,\tau_b,\tau_w]_b)& = (\Si\SiI)\EIO(\SiIO)^2\\
+\eta_j([\tau_b,\tau_b,\tau_w]_b)& = (\Sj\SjI)\EIO(\SjIO)^2
+\end{align*}
+
+Differential 13, $F^{(3)}_{(1,2)}FFF$:
+%[\tau_b,\tau_w,\tau_w]_b
+\begin{align*}
+r_{ij}^\lambda([\tau_b,\tau_w,\tau_w]_w)& =(\zeta_i^\lambda(\tau_w))^2(\eta_j\tau_b)=(\SiIL)^2\SjIO)\\
+\phi_i^\lambda([\tau_b,\tau_w,\tau_w]_w) &= \SiL r_{ij}^\lambda ([\tau_b,\tau_w,\tau_w]_w))\\
+&= \SiL(\SiIL)^2 \SjIO\\
+\zeta_i^\lambda([\tau_b,\tau_w,\tau_w]_w) & = (\Si( \SiI)^2) \SjIO)\EIL\\
+\eta_i([\tau_b,\tau_w,\tau_w]_b)& = (\Si( \SiI)^2) \SjIO)\EIO\\
+\eta_j([\tau_b,\tau_w,\tau_w]_b)& = (\Sj( \SjI)^2) \SkIO)\EIO
+\end{align*}
+
+Differential  14, $F^{(3)}_{(0,3)}FF$, $g'''FFF$:
+%[\tau_w,\tau_w,\tau_w]_b 
+\begin{align*}
+r_{ij}^\lambda([\tau_w,\tau_w,\tau_w]_w)& =(\zeta_i^\lambda(\tau_w))^3=(\SiIL)^3\\
+\phi_i^\lambda([\tau_w,\tau_w,\tau_w]_w) &= \SiL r_{ij}^\lambda ([\tau_w,\tau_w,\tau_w]_w))\\
+&= \SiL(\SiIL)^3 \\
+\zeta_i^\lambda([\tau_w,\tau_w,\tau_w]_w) & = (\Si( \SiI)^3)\EIL \\
+\eta_i([\tau_w,\tau_w,\tau_w]_b)& = (\Si (\SiI)^3)\EIO \\
+\eta_j([\tau_w,\tau_w,\tau_w]_b)& = (\Sj (\SjI)^3)\EIO
+\end{align*}
+
+Differential  15, $F^{(2)}_{(2,0)}F^{(1)}_{(1,0)}FF$, $f''f'FF$, $N''N'NN$ 
+%[\tau_b,[\tau_b]_b]_b
+\begin{align*}
+r_{ij}^\lambda([\tau_b,[\tau_b]_b]_w)& =\eta_j(\tau_b)\eta_j([\tau_b]_b)=\SjIO(\SjIO \SkIO)\\
+\phi_i^\lambda([\tau_b,[\tau_b]_b]_w) &= \SiL r_{ij}^\lambda ([\tau_w,\tau_w,\tau_w]_w))\\
+&= \SiL\SjIO(\SjIO \SkIO) \\
+\zeta_i^\lambda([\tau_b,[\tau_b]_b]_w) & =  \SiIL\SjIO (\SjIO \SkIO) \\
+\eta_i([\tau_b,[\tau_b]_b]_b)& = \SiIO\SjIO(\SjIO \SkIO)\\
+\eta_j([\tau_b,[\tau_b]_b]_b)& = \SjIO\SkIO(\SkIO \SlIO)
+\end{align*}
+
+Differential  16, $F^{(2)}_{(1,1)}F^{(1)}_{(1,0)}FF$
+%[\tau_b,[\tau_b]_w]_b
+\begin{align*}
+r_{ij}^\lambda([\tau_b,[\tau_b]_w]_w)& =\eta_j(\tau_b)\zeta_i^\lambda([\tau_b]_w)=\SjIO(\SiIL \SjIO)\\
+\phi_i^\lambda([\tau_b,[\tau_b]_w]_w) &= \SiL r_{ij}^\lambda ([\tau_b,[\tau_b]_w]_w)\\
+&= (\SiL\SjIO)(\SiIL \SjIO) \\
+\zeta_i^\lambda([\tau_b,[\tau_b]_w]_w) & = ((\Si\SjIO)(\SiI \SjIO))\EIL  \\
+\eta_i([\tau_b,[\tau_b]_w]_b)& =  ((\Si\SjIO)(\SiI \SjIO))\EIO\\
+\eta_j([\tau_b,[\tau_b]_w]_b)& = ((\Sj\SkIO)(\SjI \SkIO))\EIO
+\end{align*}
+
+Differential  17, $F^{(2)}_{(2,0)}F^{(1)}_{(0,1)}FF$
+%[\tau_w,[\tau_b]_b]_b
+\begin{align*}
+r_{ij}^\lambda([\tau_w,[\tau_b]_b]_w)& =\zeta_i^\lambda(\tau_w)\eta_j([\tau_w]_w)=\SiIL\SjIO \SkIO\\
+\phi_i^\lambda([\tau_w,[\tau_b]_b]_w) &= \sum_{j=1}^{i-1}a_{ij}^{[0]}[\lambda]r_{ij}^\lambda ([\tau_w,[\tau_b]_b]_w)\\
+\end{align*}
+
+Differential 18, $F^{(2)}_{(2,0)}F^{(1)}_{(0,1)}FF$, $f''g'FF $, $N''LNN$ 
+%$[\tau_b,[\tau_w]_b]_b$ \\
+\begin{align*}
+r_{ij}^\lambda([\tau_b,[\tau_w]_b]_w)& =\eta_j^\lambda(\tau_b)\eta_j^\lambda([\tau_w]_b)=\sum_{k=1}^{j-1}a_{jk}^{[1]}[1](\sum_{k=1}^{j-1}a_{jk}^{[0]}\sum_{k=1}^{j-1}a_{jk}^{[1]})^{[1]}[1]\\
+\phi_i^\lambda([\tau_b,[\tau_w]_b]_w) &= \sum_{j=1}^{i-1}a_{ij}^{[0]}[\lambda]r_{ij}^\lambda ([[\tau_w]_w]_w)\\
+&= \sum_{j=1}^{i-1}a_{ij}^{[0]}[\lambda]\sum_{k=1}^{j-1}a_{jk}^{[1]}[1](\sum_{k=1}^{j-1}a_{jk}^{[0]}\sum_{k=1}^{j-1}a_{jk}^{[1]})^{[1]}[1]\\
+\zeta_i^\lambda([\tau_b,[\tau_w]_b]_w) & = (\sum_{j=1}^{i-1}a_{ij}^{[0]}\sum_{k=1}^{j-1}a_{jk}^{[1]}[1](\sum_{k=1}^{j-1}a_{jk}^{[0]}\sum_{k=1}^{j-1}a_{jk}^{[1]})^{[1]}[1])^{[1]}[\lambda]\\
+\eta_i([\tau_b,[\tau_w]_b]_w) & = (\sum_{j=1}^{i-1}a_{ij}^{[0]}\sum_{k=1}^{j-1}a_{jk}^{[1]}[1](\sum_{k=1}^{j-1}a_{jk}^{[0]}\sum_{k=1}^{j-1}a_{jk}^{[1]})^{[1]}[1])^{[1]}[1]\\
+\end{align*}
+
+Differential 24, $F^{(1)}_{(0,1)}F^{(2)}_{(2,0)}FF$, $g'f''FF$,  $LN''NN$:
+%& $[[\tau_b,\tau_b]_w]_b$
+\begin{align*}
+r_{ij}^\lambda([[\tau_b,\tau_b]_w]_w)& =\zeta_i^{\lambda}([\tau_b,\tau_b]_w)) =\sum_{j=1}^{i-1}a_{ij}^{[1]}[\lambda](\sum_{k=1}^{j-1} a_{jk}^{[1]}[1])^2\\
+\phi_i^\lambda([[\tau_b,\tau_b]_w]_w) &= \sum_{j=1}^{i-1}a_{ij}^{[0]}[\lambda]r_{ij}^\lambda ([\tau_b,\tau_b]_b)_w)\\
+& = \sum_{j=1}^{i-1}a_{ij}^{[0]}[\lambda]\sum_{j=1}^{i-1}a_{ij}^{[1]}[\lambda](\sum_{k=1}^{j-1} a_{jk}^{[1]}[1])^2\\
+\zeta_i^\lambda([[\tau_b,\tau_b]_w]_w) & =(\sum_{j=1}^{i-1}a_{ij}^{[0]}\sum_{j=1}^{i-1}a_{ij}^{[1]})^{[1]}[\lambda](\sum_{k=1}^{j-1} a_{jk}^{[1]}[1])^2\\
+\eta_i([[\tau_b,\tau_b]_w]_b) & =(\sum_{j=1}^{i-1}a_{ij}^{[0]}\sum_{j=1}^{i-1}a_{ij}^{[1]})^{[1]}[1](\sum_{k=1}^{j-1} a_{jk}^{[1]}[1])^2\\
+\end{align*}
+
+Differential  30, $F^{(1)}_{(0,1)}F^{(1)}_{(1,0)}F^{(1)}_{(1,0)}F$, $g'f'f'F$, $LN'N'N$ 
+%[[[\tau_w]_b]_b]_b$ Falsch
+\begin{align*}
+r_{ij}^\lambda([[[\tau_b]_b]_w]_w)& =\zeta_i^{\lambda}([[\tau_b]_b]_w])=\sum_{j=1}^{i-1}a_{ij}^{[1]}[\lambda]\sum_{k=1}^{j-1}a_{jk}^{[1]}[1]\sum_{l=1}^{k-1}a_{kl}^{[1]}[1]\\
+\phi_i^\lambda([[[\tau_w]_b]_b]_w)&= \sum_{j=1}^{i-1}a_{ij}^{[0]}[\lambda]r_{ij}^\lambda ([[[\tau_b]_b]_w]_w)\\
+& = \sum_{j=1}^{i-1}a_{ij}^{[0]}[\lambda]\sum_{j=1}^{i-1}a_{ij}^{[1]}[\lambda]\sum_{k=1}^{j-1}a_{jk}^{[1]}[1]\sum_{l=1}^{k-1}a_{kl}^{[1]}[1]\\
+\zeta_i^\lambda([[[\tau_b]_b]_w]_w)& =(\sum_{j=1}^{i-1}a_{ij}^{[0]}\sum_{j=1}^{i-1}a_{ij}^{[1]})^{[1]})[\lambda]\sum_{k=1}^{j-1}a_{jk}^{[1]}[1]\sum_{l=1}^{k-1}a_{kl}^{[1]}[1]\\
+\eta_i([[[\tau_b]_b]_w]_b)& =(\sum_{j=1}^{i-1}a_{ij}^{[0]}\sum_{j=1}^{i-1}a_{ij}^{[1]})^{[1]})[1]\sum_{k=1}^{j-1}a_{jk}^{[1]}[1]\sum_{l=1}^{k-1}a_{kl}^{[1]}[1]\
+\end{align*}
+
+Differential 31, $F^{(1)}_{(1,0)}F^{(1)}_{(0,1)}F^{(1)}_{(1,0)}F$, $f'g'f'F$,  $N'LN'N$
+ %$[[[\tau_b]_w]_b]_w$ &
+ \begin{align*}
+r_{ij}^\lambda([[[\tau_b]_w]_b]_w)& =\eta_j([[\tau_b]_w]_b) =( \sum_{k=1}^{j-1}a_{ij}^{[0]}\sum_{k=1}^{j-1}a_{jk}^{[1]}\sum_{l=1}^{k-1} a_{kl}^{[1]}[1])^{[1]}[1]\\
+\phi_i^\lambda([[[\tau_b]_w]_b]_w)&= \sum_{j=1}^{i-1}a_{ij}^{[0]}[\lambda]r_{ij}^\lambda ([[[\tau_b]_w]_b]_w)\\
+& = \sum_{j=1}^{i-1}a_{ij}^{[0]}[\lambda]( \sum_{k=1}^{j-1}a_{ij}^{[0]}\sum_{k=1}^{j-1}a_{jk}^{[1]}\sum_{l=1}^{k-1} a_{kl}^{[1]}[1])^{[1]}[1]\\
+\zeta_i^\lambda([[[\tau_b]_w]_b]_w) & =\sum_{j=1}^{i-1}a_{ij}^{[1]}[\lambda]( \sum_{k=1}^{j-1}a_{ij}^{[0]}\sum_{k=1}^{j-1}a_{jk}^{[1]}\sum_{l=1}^{k-1} a_{kl}^{[1]}[1])^{[1]}[1]\\
+\eta_i([[[\tau_b]_w]_b]_b) & =\sum_{j=1}^{i-1}a_{ij}^{[1]}[1]( \sum_{k=1}^{j-1}a_{ij}^{[0]}\sum_{k=1}^{j-1}a_{jk}^{[1]}\sum_{l=1}^{k-1} a_{kl}^{[1]}[1])^{[1]}[1]\\
+\end{align*}
+
+Differential 32, $F^{(1)}_{(1,0)}F^{(1)}_{(1,0)}F^{(1)}_{(0,1)}F$, $f'f'g'F$, $N'N'LN$:
+%[[[\tau_b]_b]_w]_b
+\begin{align*}
+r_{ij}^\lambda([[[\tau_b]_b]_w]_w)& =\zeta_i^{\lambda}([[\tau_b]_b]_w])=\sum_{j=1}^{i-1}a_{ij}^{[1]}[\lambda]\sum_{k=1}^{j-1}a_{jk}^{[1]}[1]\sum_{l=1}^{k-1}a_{kl}^{[1]}[1]\\
+\phi_i^\lambda([[[\tau_w]_b]_b]_w)&= \sum_{j=1}^{i-1}a_{ij}^{[0]}[\lambda]r_{ij}^\lambda ([[[\tau_b]_b]_w]_w)\\
+& = \sum_{j=1}^{i-1}a_{ij}^{[0]}[\lambda]\sum_{j=1}^{i-1}a_{ij}^{[1]}[\lambda]\sum_{k=1}^{j-1}a_{jk}^{[1]}[1]\sum_{l=1}^{k-1}a_{kl}^{[1]}[1]\\
+\zeta_i^\lambda([[[\tau_b]_b]_w]_w)& =(\sum_{j=1}^{i-1}a_{ij}^{[0]}\sum_{j=1}^{i-1}a_{ij}^{[1]})^{[1]})[\lambda]\sum_{k=1}^{j-1}a_{jk}^{[1]}[1]\sum_{l=1}^{k-1}a_{kl}^{[1]}[1]\\
+\eta_i([[[\tau_b]_b]_w]_b)& =(\sum_{j=1}^{i-1}a_{ij}^{[0]}\sum_{j=1}^{i-1}a_{ij}^{[1]})^{[1]})[1]\sum_{k=1}^{j-1}a_{jk}^{[1]}[1]\sum_{l=1}^{k-1}a_{kl}^{[1]}[1]\
+\end{align*}
+
+
+\section{Adding shifted initial conditions}
+Algorithm:
+
+\begin{algorithm}
+\caption{Calculate series coefficient for tree $t$}
+\begin{algorithmic}
+\STATE $t=[t_1t_2\ldots t_m]$
+\FOR{$i=1$ \TO $ns+1$} 
+\STATE $\phi_i^\lambda=0$
+\FOR{$j=1$ \TO $i-1$}
+\STATE  $r_{ij}^\lambda=1$
+\FOR{$s \in [t_1t_2\ldots t_m]$}
+\IF{$s \in T_w$}
+\STATE $r_{ij}^\lambda=r_{ij}^\lambda*\zeta_{i,\lambda}(s)$ Comment: Polynomial multiplication
+\ELSE
+\STATE $r_{ij}^\lambda=r_{ij}^\lambda*\eta_j(s)$ Comment: Scalar multiplication
+\ENDIF
+\ENDFOR
+\FOR{$p=0$ \TO $\rho_i$}
+\STATE $\phi_i^\lambda=\phi_i^\lambda+a_{ijp}\lambda^p*r_{ij}^\lambda$
+\ENDFOR
+\ENDFOR
+\STATE Integrate $\frac{d}{d\lambda}\zeta_i^\lambda(t))=\phi_i^\lambda $
+\STATE $\zeta_i^0(t)=0$
+\FOR{$j=0$ \TO $i-1$}
+\STATE $\zeta_i^0(t)=\zeta_i^0(t)+d_{ij}\eta_j(t)$
+\ENDFOR
+\STATE $\eta_i(t)=\zeta_{i}^1(t)$ 
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+An identity
+$$
+DR=D(I-D)^{-1}=(D-I+I)(I-D)^{-1}=-I+(I-D)^{-1}=-I+R
+$$
+
+First order:
+
+Differential 1, $F$,  $F$ , N:
+\begin{align*}
+r_{ij}^\lambda(\tau_w) &=1\\
+\phi_i^\lambda(\tau_w) & = \SiL\\
+\zeta_i^\lambda(\tau_w) & = \SiIL+\Di\eta_j(\tau_b)\\
+\eta_i(\tau_b) & = \SiIO+\Di\eta_j(\tau_b)\\
+\eta_i(\tau_b) & = \Ri \SjIO\\
+\eta_j(\tau_b) & = \Rj\SkIO\\
+\zeta_i^\lambda(\tau_w) & = \SiIL+\Di\Rj\SkIO\
+\end{align*}
+
+Second order:
+
+Differential 2, $F^{(1)}_{(1,0)}F$, $f'F$, $N'N$:
+\begin{align*}
+r_{ij}^\lambda([\tau_b]_w) &=\eta_j^\lambda (\tau_b)=\Rj\SkIO\\\
+\phi_i^\lambda([\tau_b]_w) & = \SiL r_{ij}^\lambda ([\tau_b]_w)\\
+& = \SiL \Rj\SkIO \\
+\zeta_i^\lambda([\tau_b]_w) &=\SiIL \Rj\SkIO +\sum_{j=1}^{i-1}d_{ij}\eta_j([\tau_b]_b)\\
+\eta_i([\tau_b]_b) &=\Ri  \SjIO \Rk\SlIO\\
+\eta_j([\tau_b]_b) &=\Rj  \SkIO \Rl\SrIO\\
+\end{align*}
+
+Differential 3, $F^{(1)}_{(0,1)}F$, $g'F$, $LN$:
+\begin{align*}
+r_{ij}^\lambda([\tau_w]_w) &=\zeta_i(\tau_w)=\SiIL+\Di\Rj\SkIO\\
+\phi_i^\lambda([\tau_w]_w) &= \SiL r_{ij}^\lambda ([\tau_w]_w)\\
+& = \SiL (\SiIL+\Di \Rj\SkIO)\\\
+\zeta_i^\lambda([\tau_w]_w) &=\frac{1}{2} (\SiIL )^2+\SiIL \Di \Rj\SkIO+\Di \eta_j([\tau_w]_b))\\
+\eta_i([\tau_w]_b) &= \frac{1}{2} (\SiIO )^2+\SiIO \Di \Rj\SkIO+\Di \eta_j([\tau_w]_b))\\
+\eta_i([\tau_w]_b) &=\Ri( \frac{1}{2} (\SjIO )^2+\SjIO \Dj \Rk\SlIO) \\
+& = \Ri( \frac{1}{2} (\SjIO )^2-\SjIO\SjIO-\SjIO\Rj\SkIO)\\
+\eta_j([\tau_w]_b) &=(\Sj \SkI)\EIO \\
+\end{align*}
+
+
+
+
+\vspace{.5cm} 
+\begin{landscape}
+\begin{tabular}{lccccccccc}
+\hline
+ & El. Diff. & El. Diff. & El. Diff. &t & Notation & Notation & $\sigma(t)$ & Order Conditions & Order Owren\\
+\hline
+1 & $F$ &  $F$ & N &\treea & $\tau_b$ & $.$ &1 & $\SSiIO$ &\\
+\hline
+2 & $F^{(1)}_{(1,0)}F$ &$f'F$ & $N'N$ &\treeb & $[\tau_b]_b$ & $[.]$ &1 &$\SSiIO \SSjIO $&\\
+3 & $F^{(1)}_{(0,1)}F$ & $g'F$ & $LN$ &\treew & $[\tau_w]_b$ & $[o]$ &1 &$(\SSi \SSjI )\EIO$ &\\
+\hline
+4& $F^{(2)}_{(2,0)}FF$ & $f''FF$ & $N''NN$ &\treec & $[\tau_b,\tau_b]_b$ & $[.,.]$ &1 &$\SSiIO ( \SSjIO)^2$ &\\
+5 & $F^{(2)}_{(1,1)}FF$ & $$ & $$ &\treecc & $[\tau_w,\tau_b]_b$ & $[o,.]$ & 2 &$((\SSiI) (\SSi\SSjIO))\EIO$ &\\
+6 & $F^{(2)}_{(0,2)}FF$ & $g''FF$ & $$ &\treeccc & $[\tau_w,\tau_w]_b$ & $[o,o]$ & 1& $(\SSi(\SSiI)^2)\EIO$& \\
+7 & $F^{(1)}_{(1,0)}F^{(1)}_{(1,0)}F$ & $f'f'F$ & $N'N'N$ &\treed & $[[\tau_b]_b]_b$ &$[[.]]$ & 1 & $\SSiIO \SSjIO \SSkIO$  & \\
+8 & $F^{(1)}_{(1,0)}F^{(1)}_{(0,1)}F$ & $f'g'F$ & $N'LN$ &\treedd & $[[\tau_w]_b]_b$ & $[[o]]$ &1&$\SSiIO (\SSj \SSkI)\EIO$ & \\
+9 & $F^{(1)}_{(0,1)}F^{(1)}_{(1,0)}F$ & $g'f'F$ & $LN'N$ &\treeddd & $[[\tau_b]_w]_b$ & $[(.)]$ &1 & $(\SSi \SSiI \SSjIO)\EIO$ & \\
+10 & $F^{(1)}_{(0,1)}F^{(1)}_{(0,1)}F$ & $g'g'F$ & $LLN$ &\treedddd & $[[\tau_w]_w]_b$ & $[(\o)]$ & 1 & $(\SSi (\SSi \SSjI )\EI)\EIO$ &\\
+\hline
+\end{tabular}
+\end{landscape}
+
+\begin{landscape}
+\begin{tabular}{lccccccccc}
+\hline
+ & El. Diff. & El. Diff. & El. Diff. &t & Notation & Notation & $\sigma(t)$ & Order Conditions & Order Owren\\
+\hline
+11& $F^{(3)}_{(3,0)}FFF$& $f'''FFF$  & $N'''NNN$ & \treef & $[\tau_b,\tau_b,\tau_b]_b$ & $[.,.,.]$ & 1 & $(\SSiIO)^4$& \\
+12& $F^{(3)}_{(2,1)}FFF$ & $$ &$$ &\treeff & $[\tau_b,\tau_b,\tau_w]_b$ & $[.,.,o]$ &1 & $(\SSi\SSiI)\EIO(\SSiIO)^2$ &\\
+13& $F^{(3)}_{(1,2)}FFF$& $$  &$$ &\treefff & $[\tau_b,\tau_w,\tau_w]_b$ & $[.,o,o]$ & 1& $(\SSi (\SSiI)^2)\EIO \SSiIO$&\\
+14& $F^{(3)}_{(0,3)}FFF$ & $g'''FFF$ &  &\treeffff & $[\tau_w,\tau_w,\tau_w]_b$ & $[o,o,o]$ &1& $(\SSi (\SSiI)^3)\EIO$ & \\
+\hline
+\end{tabular}
+\end{landscape}
+
+\begin{landscape}
+\begin{tabular}{lccccccccc}
+\hline
+ & El. Diff. & El. Diff. & El. Diff. &t & Notation & Notation & $\sigma(t)$ & Order Conditions & Order Owren\\
+\hline
+15& $F^{(2)}_{(2,0)}F^{(1)}_{(1,0)}FF$& $f''f'FF$  &$N''N'NN$ &\treeg & $[\tau_b,[\tau_b]_b]_b$ & $[.,[.]]$ &1 &$\SSiIO\SSjIO(\SSjIO \SSkIO)$ &\\
+16& $F^{(2)}_{(1,1)}F^{(1)}_{(1,0)}FF$ & $$  & $$ &\treegg & $[\tau_b,[\tau_b]_w]_b$ & $[.,(.)]$ &1 &$((\SSi\SSjIO)(\SSiI \SSjIO))\EIO$ &\\
+17& $F^{(2)}_{(1,1)}F^{(1)}_{(1,0)}FF$ & $$  & $$ &\treegggg& $[\tau_w,[\tau_b]_b]_b$ & $[o,[.]]$ &1 & & \\
+18& $F^{(2)}_{(2,0)}F^{(1)}_{(0,1)}FF$ & $f''g'FF $  &$N''LNN$ &\treeggg& $[\tau_b,[\tau_w]_b]_b$ & $[.,[o]]$ &1 & & \\
+19& $F^{(2)}_{(1,1)}F^{(1)}_{(0,1)}FF$ & $$  &$$ &\treeggG & $[\tau_b,[\tau_w]_w]_b$ & $[.,(o)]$ &1 & &\\
+20& $F^{(2)}_{(1,1)}F^{(1)}_{(1,0)}FF$ & $$  &$$ &\treeggGg& $[\tau_w,[\tau_b]_b]_b$ & $[o,[o]]$ &1 & &\\
+21& $F^{(2)}_{(0,2)}F^{(1)}_{(1,0)}FF$ & $g''f'FF $  &$$ &\treegGgg& $[\tau_w,[\tau_b]_w]_b$ & $[o,(.)]$ &1 & & \\
+22& $F^{(2)}_{(0,2)}F^{(1)}_{(0,1)}FF$ & $g''g'FF $  &$$ &\treegGgg& $[\tau_w,[\tau_w]_w]_b$ & $[o,(o)]$ &1 & & \\
+\hline
+\end{tabular}
+\end{landscape}
+\vspace{.5cm} 
+\begin{tabular}{lccccccc}
+\hline
+ & El. Diff. & El. Diff. & El. Diff. &t & Notation & Notation & $\sigma(t)$\\
+\hline
+23& $F^{(1)}_{(1,0)}F^{(2)}_{(2,0)}FF$& $f'f''FF$  &$N'N''NN$ &\treeh & $[[\tau_b,\tau_b]_b]_b$ & $[[.,.]]$ &1\\
+24& $F^{(1)}_{(0,1)}F^{(2)}_{(2,0)}FF$& $g'f''FF$  &$LN''NN$ &\treehh & $[[\tau_b,\tau_b]_w]_b$ & $[(.,.)]$ &1\\
+25& $F^{(1)}_{(1,0)}F^{(2)}_{(1,1)}FF$& $$  &$$ &\treehhh& $[[\tau_b,\tau_b]_b]_b$ & $[[.,.]]$ &1\\
+26& $F^{(1)}_{(1,0)}F^{(2)}_{(2,0)}FF$& $$  &$$ & \treehhhh & $[[\tau_b,\tau_b]_b]_b$ & $[[.,.]]$ &1\\
+27& $F^{(1)}_{(1,0)}F^{(2)}_{(0,2)}FF$& $f'g''FF$  &$$ &\treehhhhhh & $[[\tau_w,\tau_w]_b]_b$ & $[[o,o]]$ &1\\
+28& $F^{(1)}_{(1,0)}F^{(2)}_{(2,0)}FF$& $g'g''FF$  &$$ &\treehhhhh & $[[\tau_w,\tau_w]_w]_b$ & $[(o,o)]$ &1\\
+\hline
+\end{tabular}
+
+\vspace{.5cm} 
+\begin{tabular}{lccccccc}
+\hline
+ & El. Diff. & El. Diff. & El. Diff. & t & Notation & Notation & $\sigma(t)$\\
+\hline
+29& $F^{(1)}_{(1,0)}F^{(1)}_{(1,0)}F^{(1)}_{(1,0)}F$& $f'f'f'F$  &$N'N'N'N$ &\treei & $[[[\tau_b]_b]_b]_b$ & $[[[.]]]$ &1\\
+30& $F^{(1)}_{(0,1)}F^{(1)}_{(1,0)}F^{(1)}_{(1,0)}F$& $g'f'f'F$  &$LN'N'N$ &\treeii & $[[[\tau_w]_b]_b]_b$ & $[([.])]$ &1\\
+31& $F^{(1)}_{(1,0)}F^{(1)}_{(0,1)}F^{(1)}_{(1,0)}F$& $f'g'f'F$  &$N'LN'N$ &\treeiii& $[[[\tau_b]_w]_b]_b$ & $[[(.)]]$ &1\\
+32& $F^{(1)}_{(1,0)}F^{(1)}_{(1,0)}F^{(1)}_{(0,1)}F$& $f'f'g'F$  &$N'N'LN$ &\treeiiii & $[[[\tau_b]_b]_w]_b$ & $[[[o]]]$ &1\\
+\hline
+\end{tabular}
+
+
+\vspace{.5cm} 
+\begin{tabular}{lccccccc}
+\hline
+ & El. Diff. & El. Diff. & El. Diff. &t & Notation & Notation & $\sigma(t)$\\
+\hline
+33& $F^{(1)}_{(0,1)}F^{(1)}_{(0,1)}F^{(1)}_{(0,1)}F$& $g'g'g'F$  &$LLLN$ &\treeI & $[[[\tau_w]_w]_w]_b$ & $[((o))]$ &1\\
+34& $F^{(1)}_{(0,1)}F^{(1)}_{(0,1)}F^{(1)}_{(1,0)}F$ & $f'g'g'F$  & $N'LLN$ &\treeII & $[[[\tau_w]_w]_b]_b$ & $[[(o)]]$ &1\\
+35& $F^{(1)}_{(1,0)}F^{(1)}_{(0,1)}F^{(1)}_{(1,0)}F$& $g'f'g'F$  &$LN'LN$ &\treeIII& $[[[\tau_w]_b]_w]_b$ & $[([o])]$ &1\\
+36& $F^{(1)}_{0,1)}F^{(1)}_{(0,1)}F^{(1)}_{(0,1)}F$& $g'g'f'F$  &$LLN'N$ &\treeIIII& $[[[\tau_b]_w]_w]_b$ & $[((.))]$ &1\\
+\hline
+\end{tabular}
+
+\vspace{2cm}
+
+
+
+
+
+
+ 
+
+
+
+
+%A recursion
+%\begin{align*}
+%pq = &(\sum_{k=0}^{\rho_1} p^k \lambda^k)(\sum_{k=0}^{\rho_2} q^k \lambda^k)\\
+%  = &  p^{\rho_1}q^{\rho_2}\lambda^{\rho_1+\rho_2}\\
+% + & (p^{\rho_1}q^{\rho_2-1}+p^{\rho_1-1}q^{\rho_2})\lambda^{\rho_1+\rho_2-1}\\
+%  + & (p^{\rho_1}q^{\rho_2-2}+p^{\rho_1-1}q^{\rho_2-1}+p^{\rho_1-1}q^{\rho_2-1})\lambda^{\rho_1+\rho_2-2}\\
+%  + &\ldots \\
+%   + & (p^{0}q^{1}+p^{1}q^{0})\lambda^1\\
+%  + & p^{0}q^{0}\lambda^0\\
+% = & \sum_{k=0}^{\rho_1+\rho_2}(\sum_{l=0}^{k} p^{l}q^{k-l})\lambda^{k}
+%\end{align*}
+%where $p^l$ is zero whenever  $l\not\in [0,\rho_1]$, resp. $q^l$ is zero whenever  $l\not\in [0,\rho_2]$.
+%
+%$$
+%(pq)^k=\sum_{l=0}^{k}p^{l}q^{k-l}
+%$$
+
+
+\end{document}
