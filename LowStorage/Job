@@ -9,3 +9,5 @@
 ../BiColourTreeMISBI ControlTSRKC84.dat  | tee ErgTSRKC84
 ../BiColourTreeMISBI ControlTSRKF84.dat  | tee ErgTSRKF84
 ../BiColourTreeMISBI ControlYRK1351.dat | tee ErgYRK1351
+../BiColourTreeMISBI ControlBPRKO73.dat | tee ErgBPRKO73
+../BiColourTreeMISBI ControlBBBRKNL64.dat | tee ErgBBBRKNL64

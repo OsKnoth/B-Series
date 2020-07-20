@@ -979,6 +979,64 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
           MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
         END DO
       END DO
+    CASE ('BPRKO73')
+    ! 7-stage third-order BPRKO73 of
+      ! Bernardini, Pirozzoli, J. Comp. Phys. 228 (2009) 4182-4199
+      WRITE(*,*) 'Method BPRKO73'
+      MISBI%nStage=7
+      MISBI%nPhi=1
+      CALL AllocateMISBI
+      MISBI%sPhi=1
+      ALLOCATE(A(MISBI%nStage))
+      ALLOCATE(B(MISBI%nStage))
+      A(2)=-1.0d0
+      A(3)=-1.0d0
+      A(4)=-1.0d0
+      A(5)=-1.0d0
+      A(6)=-1.0d0
+      A(7)=-1.0d0
+      B(1)=0.404286428d0
+      B(2)=0.3779647692d0
+      B(3)=0.5206055649d0
+      B(4)=-0.2893735752d0
+      B(5)=-0.0806088372d0
+      B(6)=0.7282311294d0
+      B(7)=0.1557168440d0
+      CALL LowStorageToMISBI(A,B,MISBI)
+      MISBI%dt=0.0d0
+      DO i=2,MISBI%nStage+1
+        DO j=1,i-1
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+        END DO
+      END DO
+    CASE ('BBBRKNL64')
+    ! 6-stage fourth-order BBBRKNL64 of
+      ! Berland, Bogey, Bailly, Computers and Fluids 35 (2006) 1459-1463
+      WRITE(*,*) 'Method BBBRKNL64'
+      MISBI%nStage=6
+      MISBI%nPhi=1
+      CALL AllocateMISBI
+      MISBI%sPhi=1
+      ALLOCATE(A(MISBI%nStage))
+      ALLOCATE(B(MISBI%nStage))
+      A(2)=-0.737101392796d0
+      A(3)=-1.634740794341d0
+      A(4)=-0.744739003780d0
+      A(5)=-1.469897351522d0
+      A(6)=-2.813971388035d0
+      B(1)=0.032918605146d0
+      B(2)=0.823256998200d0
+      B(3)=0.381530948900d0
+      B(4)=0.200092213184d0
+      B(5)=1.718581042715d0
+      B(6)=0.27d0
+      CALL LowStorageToMISBI(A,B,MISBI)
+      MISBI%dt=0.0d0
+      DO i=2,MISBI%nStage+1
+        DO j=1,i-1
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+        END DO
+      END DO
     CASE ('MRI-GARK-ERK45a')
     ! Sandu
       WRITE(*,*) 'Method: MRI-GARK-ERK45a'
