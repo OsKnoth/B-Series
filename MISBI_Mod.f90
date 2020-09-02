@@ -79,7 +79,7 @@ SUBROUTINE MISBIBSeriesCompose1(PhiMISBI,MISBI,pMax)
             END DO  
           END DO  
           DO k=1,MISBI%sPhi(iS)
-            CALL AddPolynomScalar(Z(iS)%Phi(p)%a(i),Z(iS)%Phi(p)%a(i),MISBI%A(is,js)%a(k),TempW%Phi(p)%a(i))
+            CALL AddPolynomScalar(Z(iS)%Phi(p)%a(i),Z(iS)%Phi(p)%a(i),MISBI%a(is,js)%a(k),TempW%Phi(p)%a(i))
             IF (k<MISBI%nPhi) THEN
               CALL MultPolynom(TempW%Phi(p)%a(i),TempW%Phi(p)%a(i),PowerOne)
             END IF
@@ -174,7 +174,7 @@ SUBROUTINE MISBIBSeriesCompose(PhiMISBI,PhiPMISBI,MISBI,pMax)
             END DO  
           END DO  
           DO k=1,MISBI%sPhi(iS)
-            CALL AddPolynomScalar(Z(iS)%Phi(p)%a(i),Z(iS)%Phi(p)%a(i),MISBI%A(is,js)%a(k),TempW%Phi(p)%a(i))
+            CALL AddPolynomScalar(Z(iS)%Phi(p)%a(i),Z(iS)%Phi(p)%a(i),MISBI%a(is,js)%a(k),TempW%Phi(p)%a(i))
             IF (k<MISBI%sPhi(iS)) THEN
               CALL MultPolynom(TempW%Phi(p)%a(i),TempW%Phi(p)%a(i),PowerOne(k))
             END IF
@@ -1180,25 +1180,25 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nStage=5
       MISBI%nPhi=1
       CALL AllocateMISBI
-      MISBI%A(2,1)%a(1)=0.5d0
+      MISBI%a(2,1)%a(1)=0.5d0
 
-      MISBI%A(3,1)%a(1)=0.0d0
-      MISBI%A(3,2)%a(1)=0.5d0
+      MISBI%a(3,1)%a(1)=0.0d0
+      MISBI%a(3,2)%a(1)=0.5d0
 
-      MISBI%A(4,1)%a(1)=-0.5d0
-      MISBI%A(4,2)%a(1)=0.0d0
-      MISBI%A(4,3)%a(1)=1.0d0
+      MISBI%a(4,1)%a(1)=-0.5d0
+      MISBI%a(4,2)%a(1)=0.0d0
+      MISBI%a(4,3)%a(1)=1.0d0
 
-      MISBI%A(5,1)%a(1)=0.25d0
-      MISBI%A(5,2)%a(1)=1.0d0/6.0d0
-      MISBI%A(5,3)%a(1)=1.0d0/6.0d0
-      MISBI%A(5,4)%a(1)=-1.0d0/12.0d0
+      MISBI%a(5,1)%a(1)=0.25d0
+      MISBI%a(5,2)%a(1)=1.0d0/6.0d0
+      MISBI%a(5,3)%a(1)=1.0d0/6.0d0
+      MISBI%a(5,4)%a(1)=-1.0d0/12.0d0
 
-      MISBI%A(6,1)%a(1)=-1.0d0/12.0d0
-      MISBI%A(6,2)%a(1)=1.0d0/6.0d0
-      MISBI%A(6,3)%a(1)=1.0d0/6.0d0
-      MISBI%A(6,4)%a(1)=0.25d0
-      MISBI%A(6,5)%a(1)=0.0d0
+      MISBI%a(6,1)%a(1)=-1.0d0/12.0d0
+      MISBI%a(6,2)%a(1)=1.0d0/6.0d0
+      MISBI%a(6,3)%a(1)=1.0d0/6.0d0
+      MISBI%a(6,4)%a(1)=0.25d0
+      MISBI%a(6,5)%a(1)=0.0d0
 
       MISBI%c=0.0d0
       MISBI%d=0.0d0
@@ -1217,23 +1217,23 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=3
       CALL AllocateMISBI
       MISBI%sPhi=0
-      MISBI%A(2,1)%a(1)=0.5d0
+      MISBI%a(2,1)%a(1)=0.5d0
       MISBI%sPhi(2)=1
 
-      MISBI%A(3,1)%a(1)=-40.0d0 
-      MISBI%A(3,1)%a(2)=78.0d0
-      MISBI%A(3,2)%a(1)=41.0d0
-      MISBI%A(3,2)%a(2)=-78.0d0
+      MISBI%a(3,1)%a(1)=-40.0d0 
+      MISBI%a(3,1)%a(2)=78.0d0
+      MISBI%a(3,2)%a(1)=41.0d0
+      MISBI%a(3,2)%a(2)=-78.0d0
       MISBI%sPhi(3)=2
 
-      MISBI%A(4,1)%a(1)=1.0d0/3.0d0
-      MISBI%A(4,1)%a(2)=-1.0d0
-      MISBI%A(4,1)%a(3)=1.0d0
-      MISBI%A(4,2)%a(1)=4.0d0/3.0d0
-      MISBI%A(4,2)%a(3)=-2.0d0
-      MISBI%A(4,3)%a(1)=-2.0d0/3.0d0
-      MISBI%A(4,3)%a(2)=1.0d0
-      MISBI%A(4,3)%a(3)=1.0d0
+      MISBI%a(4,1)%a(1)=1.0d0/3.0d0
+      MISBI%a(4,1)%a(2)=-1.0d0
+      MISBI%a(4,1)%a(3)=1.0d0
+      MISBI%a(4,2)%a(1)=4.0d0/3.0d0
+      MISBI%a(4,2)%a(3)=-2.0d0
+      MISBI%a(4,3)%a(1)=-2.0d0/3.0d0
+      MISBI%a(4,3)%a(2)=1.0d0
+      MISBI%a(4,3)%a(3)=1.0d0
       MISBI%sPhi(4)=3
 
       MISBI%c(1)=0.0d0
@@ -1252,12 +1252,12 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       CALL AllocateMISBI
       MISBI%sPhi=1
 
-      MISBI%A(2,1)%a(1)=  0.66666666666666696d0
-      MISBI%A(3,1)%a(1)= -0.28247174703488398d0
-      MISBI%A(3,2)%a(1)=  0.44444444444444398d0
-      MISBI%A(4,1)%a(1)= -0.31198081960042401d0
-      MISBI%A(4,2)%a(1)=  0.18082737579913699d0
-      MISBI%A(4,3)%a(1)=  0.56250000000000000d0
+      MISBI%a(2,1)%a(1)=  0.66666666666666696d0
+      MISBI%a(3,1)%a(1)= -0.28247174703488398d0
+      MISBI%a(3,2)%a(1)=  0.44444444444444398d0
+      MISBI%a(4,1)%a(1)= -0.31198081960042401d0
+      MISBI%a(4,2)%a(1)=  0.18082737579913699d0
+      MISBI%a(4,3)%a(1)=  0.56250000000000000d0
 
       MISBI%c(2)=  0.66666666666666696d0     
       MISBI%c(3)=  0.66666666666666685d0     
@@ -1272,7 +1272,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%g(4,3)= -0.2459300561692391d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%A(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
         END DO
       END DO
     CASE('MISTvdB') 
@@ -1281,12 +1281,12 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       CALL AllocateMISBI
       MISBI%sPhi=1
 
-      MISBI%A(2,1)%a(1)=  0.66666666666666696     
-      MISBI%A(3,1)%a(1)= -0.25492859100078202     
-      MISBI%A(3,2)%a(1)=  0.44444444444444398     
-      MISBI%A(4,1)%a(1)= -0.26452517179288798     
-      MISBI%A(4,2)%a(1)=  0.11424084424766399     
-      MISBI%A(4,3)%a(1)=  0.56250000000000000     
+      MISBI%a(2,1)%a(1)=  0.66666666666666696     
+      MISBI%a(3,1)%a(1)= -0.25492859100078202     
+      MISBI%a(3,2)%a(1)=  0.44444444444444398     
+      MISBI%a(4,1)%a(1)= -0.26452517179288798     
+      MISBI%a(4,2)%a(1)=  0.11424084424766399     
+      MISBI%a(4,3)%a(1)=  0.56250000000000000     
       MISBI%c(2)=  0.66666666666666696     
       MISBI%c(3)=  0.66666666666666685     
       MISBI%c(4)=   1.0000000000000009     
@@ -1309,28 +1309,28 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=3
       CALL AllocateMISBI
 
-      MISBI%A(2,1)%a(1)=0.5d0
+      MISBI%a(2,1)%a(1)=0.5d0
 
-      MISBI%A(3,1)%a(1)= 0.5d0
-      MISBI%A(3,1)%a(2)=-1.0d0
-      MISBI%A(3,2)%a(2)= 1.0d0
+      MISBI%a(3,1)%a(1)= 0.5d0
+      MISBI%a(3,1)%a(2)=-1.0d0
+      MISBI%a(3,2)%a(2)= 1.0d0
 
-      MISBI%A(4,1)%a(1)= 1.0d0
-      MISBI%A(4,1)%a(2)=-2.0d0
-      MISBI%A(4,3)%a(2)= 2.0d0
+      MISBI%a(4,1)%a(1)= 1.0d0
+      MISBI%a(4,1)%a(2)=-2.0d0
+      MISBI%a(4,3)%a(2)= 2.0d0
 
-      MISBI%A(5,1)%a(1)= 1.0d0
-      MISBI%A(5,1)%a(2)=-3.0d0
-      MISBI%A(5,1)%a(3)= 4.0d0
-      MISBI%A(5,2)%a(1)= 0.0d0
-      MISBI%A(5,2)%a(2)= 2.0d0
-      MISBI%A(5,2)%a(3)=-4.0d0
-      MISBI%A(5,3)%a(1)= 0.0d0
-      MISBI%A(5,3)%a(2)= 2.0d0
-      MISBI%A(5,3)%a(3)=-4.0d0
-      MISBI%A(5,4)%a(1)= 0.0d0
-      MISBI%A(5,4)%a(2)=-1.0d0
-      MISBI%A(5,4)%a(3)= 4.0d0
+      MISBI%a(5,1)%a(1)= 1.0d0
+      MISBI%a(5,1)%a(2)=-3.0d0
+      MISBI%a(5,1)%a(3)= 4.0d0
+      MISBI%a(5,2)%a(1)= 0.0d0
+      MISBI%a(5,2)%a(2)= 2.0d0
+      MISBI%a(5,2)%a(3)=-4.0d0
+      MISBI%a(5,3)%a(1)= 0.0d0
+      MISBI%a(5,3)%a(2)= 2.0d0
+      MISBI%a(5,3)%a(3)=-4.0d0
+      MISBI%a(5,4)%a(1)= 0.0d0
+      MISBI%a(5,4)%a(2)=-1.0d0
+      MISBI%a(5,4)%a(3)= 4.0d0
 
       MISBI%c(1)=0.0d0
       MISBI%c(2)=0.5d0
@@ -1365,14 +1365,14 @@ SUBROUTINE LowStorageToMISBI(A,B,MISBI)
     MISBI%d(i+1,i)=1.0d0
   END DO  
   DO i=1,MISBI%nStage
-    MISBI%A(i+1,i)%a(1)=B(i)
+    MISBI%a(i+1,i)%a(1)=B(i)
     DO j=i-1,1,-1
-      MISBI%A(i+1,j)%a(1)=A(j+1)*MISBI%A(i+1,j+1)%a(1)+B(j)
+      MISBI%a(i+1,j)%a(1)=A(j+1)*MISBI%a(i+1,j+1)%a(1)+B(j)
     END DO
   END DO
   DO i=MISBI%nStage,1,-1
     DO j=1,MISBI%nStage
-      MISBI%A(i+1,j)%a=MISBI%A(i+1,j)%a-MISBI%A(i,j)%a
+      MISBI%a(i+1,j)%a=MISBI%a(i+1,j)%a-MISBI%a(i,j)%a
     END DO  
   END DO  
 END SUBROUTINE LowStorageToMISBI
@@ -1390,8 +1390,8 @@ SUBROUTINE AllocateMISBI
   ALLOCATE(MISBI%a(MISBI%nStage+1,MISBI%nStage))
   DO i=1,MISBI%nStage+1
     DO j=1,MISBI%nStage
-      ALLOCATE(MISBI%A(i,j)%a(MISBI%nPhi))
-      MISBI%A(i,j)%a=0.0d0
+      ALLOCATE(MISBI%a(i,j)%a(MISBI%nPhi))
+      MISBI%a(i,j)%a=0.0d0
     END DO 
   END DO 
 END SUBROUTINE AllocateMISBI
