@@ -10,7 +10,8 @@ MODULE MISBI_Mod
     INTEGER :: nStage
     INTEGER :: nPhi
     INTEGER, ALLOCATABLE :: sPhi(:)
-    TYPE(Koeff_T), ALLOCATABLE :: a(:,:)
+    REAL(8), ALLOCATABLE :: aS(:,:)
+    TYPE(Koeff_T), ALLOCATABLE :: aF(:,:)
     REAL(8), ALLOCATABLE :: d(:,:)
     REAL(8), ALLOCATABLE :: g(:,:)
     REAL(8), ALLOCATABLE :: c(:)
@@ -74,12 +75,12 @@ SUBROUTINE MISBIBSeriesCompose1(PhiMISBI,MISBI,pMax)
               IF (Child%Colour=='w') THEN
                 CALL MultPolynom(TempW%Phi(p)%a(i),TempW%Phi(p)%a(i),Z(iS)%Phi(OrderLoc)%a(NumberLoc))
               ELSE
-                CALL MultScalarPolynom(TemPW%Phi(p)%a(i),Eta(jS)%Phi(OrderLoc)%a(NumberLoc))
+                CALL MultScalarPolynom(TempW%Phi(p)%a(i),Eta(jS)%Phi(OrderLoc)%a(NumberLoc))
               END IF  
             END DO  
           END DO  
           DO k=1,MISBI%sPhi(iS)
-            CALL AddPolynomScalar(Z(iS)%Phi(p)%a(i),Z(iS)%Phi(p)%a(i),MISBI%a(is,js)%a(k),TempW%Phi(p)%a(i))
+            CALL AddPolynomScalar(Z(iS)%Phi(p)%a(i),Z(iS)%Phi(p)%a(i),MISBI%aF(is,js)%a(k),TempW%Phi(p)%a(i))
             IF (k<MISBI%nPhi) THEN
               CALL MultPolynom(TempW%Phi(p)%a(i),TempW%Phi(p)%a(i),PowerOne)
             END IF
@@ -161,24 +162,29 @@ SUBROUTINE MISBIBSeriesCompose(PhiMISBI,PhiPMISBI,MISBI,pMax)
         DO i=1,ListTree(p)%LenListTree
           Tree=>TreeP%TP
           CALL UnitPolynom(TempW%Phi(p)%a(i))
+          TempB%Phi(p)%a=1.0d0
           DO j=1,Tree%NumberChilds
             Child=>Tree%Childs(j)%TP
             OrderLoc=Child%Order
             NumberLoc=Child%NumberOrder
             DO k=1,Tree%OrderChilds(j)
               IF (Child%Colour=='w') THEN
+                TempB%Phi(p)%a(i)=TempB%Phi(p)%a(i)*Eta(jS)%Phi(OrderLoc)%a(NumberLoc)
                 CALL MultPolynom(TempW%Phi(p)%a(i),TempW%Phi(p)%a(i),Z(iS)%Phi(OrderLoc)%a(NumberLoc))
               ELSE  
+                TempB%Phi(p)%a(i)=TempB%Phi(p)%a(i)*Eta(jS)%Phi(OrderLoc)%a(NumberLoc)
                 CALL MultScalarPolynom(TempW%Phi(p)%a(i),Eta(jS)%Phi(OrderLoc)%a(NumberLoc))
               END IF  
             END DO  
           END DO  
           DO k=1,MISBI%sPhi(iS)
-            CALL AddPolynomScalar(Z(iS)%Phi(p)%a(i),Z(iS)%Phi(p)%a(i),MISBI%a(is,js)%a(k),TempW%Phi(p)%a(i))
+            CALL AddPolynomScalar(Z(iS)%Phi(p)%a(i),Z(iS)%Phi(p)%a(i),MISBI%aF(is,js)%a(k),TempW%Phi(p)%a(i))
             IF (k<MISBI%sPhi(iS)) THEN
               CALL MultPolynom(TempW%Phi(p)%a(i),TempW%Phi(p)%a(i),PowerOne(k))
             END IF
           END DO
+          WRITE(*,*) p,is,js,i,MISBI%aS(is,js),TempB%Phi(p)%a(i)
+          Z(iS)%Phi(p)%a(i)%Koeff(0)=Z(iS)%Phi(p)%a(i)%Koeff(0)+MISBI%aS(is,js)*TempB%Phi(p)%a(i)
           TreeP=>TreeP%Next
         END DO
       END DO  
@@ -244,39 +250,39 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
           END IF  
           DO k=1,nPhiSym
             CALL RANDOM_NUMBER(Rand)
-            MISBI%a(i,j)%a(k)=Rand
-            MISBI%a(i,j)%a(k)=5.0d0
+            MISBI%aF(i,j)%a(k)=Rand
+            MISBI%aF(i,j)%a(k)=5.0d0
           END DO
         END DO
       END DO
       DO i=2,MISBI%nStage+1
         MISBI%c(i)=0.0d0
         DO j=1,i-1
-          MISBI%c(i)=MISBI%c(i)+MISBI%a(i,j)%a(1)
+          MISBI%c(i)=MISBI%c(i)+MISBI%aF(i,j)%a(1)
         END DO  
         DO k=2,nPhiSym
           SumRow=0.0d0
           DO j=1,i-1
-            SumRow=SumRow+MISBI%a(i,j)%a(k)
+            SumRow=SumRow+MISBI%aF(i,j)%a(k)
           END DO  
           SumRow=SumRow/(i-1)
           DO j=1,i-1
-            MISBI%a(i,j)%a(k)=MISBI%a(i,j)%a(k)-SumRow
+            MISBI%aF(i,j)%a(k)=MISBI%aF(i,j)%a(k)-SumRow
           END DO  
         END DO
       END DO
       MISBI%c(MISBI%nStage+1)=1.0d0
       SumRow=0.0d0
       DO i=1,MISBI%nStage
-        SumRow=SumRow+MISBI%a(nStageSym+1,i)%a(1)
+        SumRow=SumRow+MISBI%aF(nStageSym+1,i)%a(1)
       END DO  
       DO i=1,MISBI%nStage
-        MISBI%a(MISBI%nStage+1,i)%a(1)=MISBI%a(MISBI%nStage+1,i)%a(1)/SumRow
+        MISBI%aF(MISBI%nStage+1,i)%a(1)=MISBI%aF(MISBI%nStage+1,i)%a(1)/SumRow
       END DO  
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE('ExEuler') 
@@ -284,7 +290,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=1
       MISBI%sPhi=MISBI%nPhi
       CALL AllocateMISBI
-      MISBI%a(2,1)%a(1)=1.0d0
+      MISBI%aF(2,1)%a(1)=1.0d0
 
       MISBI%dt(1)=0.0d0
       MISBI%dt(2)=1.0d0
@@ -293,9 +299,9 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=1
       MISBI%sPhi=MISBI%nPhi
       CALL AllocateMISBI
-      MISBI%a(2,1)%a(1)=0.5d0
-      MISBI%a(3,1)%a(1)=-0.5d0
-      MISBI%a(3,2)%a(1)=1.0d0
+      MISBI%aF(2,1)%a(1)=0.5d0
+      MISBI%aF(3,1)%a(1)=-0.5d0
+      MISBI%aF(3,2)%a(1)=1.0d0
 
       MISBI%d(3,2)=1.0d0
 
@@ -307,8 +313,8 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=1
       MISBI%sPhi=MISBI%nPhi
       CALL AllocateMISBI
-      MISBI%a(2,1)%a(1)=0.5d0
-      MISBI%a(3,2)%a(1)=1.0d0
+      MISBI%aF(2,1)%a(1)=0.5d0
+      MISBI%aF(3,2)%a(1)=1.0d0
 
       MISBI%d(3,2)=0.0d0
 
@@ -319,9 +325,9 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nStage=2
       MISBI%nPhi=1
       CALL AllocateMISBI
-      MISBI%a(2,1)%a(1)=1.0d0
-      MISBI%a(3,1)%a(1)=0.5d0
-      MISBI%a(3,2)%a(1)=0.5d0
+      MISBI%aF(2,1)%a(1)=1.0d0
+      MISBI%aF(3,1)%a(1)=0.5d0
+      MISBI%aF(3,2)%a(1)=0.5d0
 
       MISBI%dt(1)=0.0d0
       MISBI%dt(2)=1.0d0
@@ -330,12 +336,12 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nStage=3
       MISBI%nPhi=3
       CALL AllocateMISBI
-      MISBI%a(2,1)%a(1)=1.0d0/3.0d0
+      MISBI%aF(2,1)%a(1)=1.0d0/3.0d0
       MISBI%sPhi(2)=1
-      MISBI%a(3,2)%a(1)=2.0d0/3.0d0
+      MISBI%aF(3,2)%a(1)=2.0d0/3.0d0
       MISBI%sPhi(3)=2
-      MISBI%a(4,1)%a(1)=1.0d0/4.0d0
-      MISBI%a(4,3)%a(1)=3.0d0/4.0d0
+      MISBI%aF(4,1)%a(1)=1.0d0/4.0d0
+      MISBI%aF(4,3)%a(1)=3.0d0/4.0d0
       MISBI%sPhi(4)=3
       MISBI%c(1)=0.0d0
       MISBI%c(2)=1.0d0/3.0d0
@@ -349,9 +355,9 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nStage=3
       MISBI%nPhi=1
       CALL AllocateMISBI
-      MISBI%a(2,1)%a(1)=1.0d0/3.0d0
-      MISBI%a(3,2)%a(1)=1.0d0/6.0d0
-      MISBI%a(4,3)%a(1)=1.0d0
+      MISBI%aF(2,1)%a(1)=1.0d0/3.0d0
+      MISBI%aF(3,2)%a(1)=1.0d0/6.0d0
+      MISBI%aF(4,3)%a(1)=1.0d0
       MISBI%d(3,2)=1.0d0
       MISBI%dt(1)=0.0d0
       MISBI%dt(2)=1.0d0/3.0d0
@@ -362,9 +368,9 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=1
       CALL AllocateMISBI
       MISBI%sPhi=1
-      MISBI%a(2,1)%a(1)=1.0d0/3.0d0
-      MISBI%a(3,2)%a(1)=1.0d0/2.0d0
-      MISBI%a(4,3)%a(1)=1.0d0
+      MISBI%aF(2,1)%a(1)=1.0d0/3.0d0
+      MISBI%aF(3,2)%a(1)=1.0d0/2.0d0
+      MISBI%aF(4,3)%a(1)=1.0d0
       MISBI%dt(1)=0.0d0
       MISBI%dt(2)=1.0d0/3.0d0
       MISBI%dt(3)=1.0d0/2.0d0
@@ -373,13 +379,13 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nStage=4
       MISBI%nPhi=1
       CALL AllocateMISBI
-      MISBI%a(2,1)%a(1)=0.5d0
-      MISBI%a(3,2)%a(1)=0.5d0
-      MISBI%a(4,3)%a(1)=1.0d0
-      MISBI%a(5,1)%a(1)=1.0d0/6.0d0
-      MISBI%a(5,2)%a(1)=2.0d0/6.0d0
-      MISBI%a(5,3)%a(1)=2.0d0/6.0d0
-      MISBI%a(5,4)%a(1)=1.0d0/6.0d0
+      MISBI%aF(2,1)%a(1)=0.5d0
+      MISBI%aF(3,2)%a(1)=0.5d0
+      MISBI%aF(4,3)%a(1)=1.0d0
+      MISBI%aF(5,1)%a(1)=1.0d0/6.0d0
+      MISBI%aF(5,2)%a(1)=2.0d0/6.0d0
+      MISBI%aF(5,3)%a(1)=2.0d0/6.0d0
+      MISBI%aF(5,4)%a(1)=1.0d0/6.0d0
       MISBI%c(1)=0.0d0
       MISBI%c(2)=0.5d0
       MISBI%c(3)=0.5d0
@@ -394,8 +400,8 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nStage=2
       MISBI%nPhi=1
       CALL AllocateMISBI
-      MISBI%a(2,1)%a(1)=0.0d0
-      MISBI%a(3,2)%a(1)=0.0d0
+      MISBI%aF(2,1)%a(1)=0.0d0
+      MISBI%aF(3,2)%a(1)=0.0d0
 
       MISBI%d(3,2)=0.0d0
 
@@ -407,12 +413,12 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=1
       CALL AllocateMISBI
       MISBI%sPhi=1
-      MISBI%a(1,1)%a(1)=5.0d0/12.0d0
-      MISBI%a(1,2)%a(1)=-1.0d0/12.0d0
-      MISBI%a(2,1)%a(1)=3.0d0/4.0d0
-      MISBI%a(2,2)%a(1)=1.0d0/4.0d0
-      MISBI%a(3,1)%a(1)=3.0d0/4.0d0
-      MISBI%a(3,2)%a(1)=1.0d0/4.0d0
+      MISBI%aF(1,1)%a(1)=5.0d0/12.0d0
+      MISBI%aF(1,2)%a(1)=-1.0d0/12.0d0
+      MISBI%aF(2,1)%a(1)=3.0d0/4.0d0
+      MISBI%aF(2,2)%a(1)=1.0d0/4.0d0
+      MISBI%aF(3,1)%a(1)=3.0d0/4.0d0
+      MISBI%aF(3,2)%a(1)=1.0d0/4.0d0
 
 
       MISBI%dt(1)=1.0d0/3.0d0
@@ -423,12 +429,12 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=1
       CALL AllocateMISBI
       MISBI%sPhi=1
-      MISBI%a(1,1)%a(1)=1.0d0/4.0d0
-      MISBI%a(1,2)%a(1)=(3.0d0-2.0d0*SQRT(3.0d0))/12.0d0
-      MISBI%a(2,1)%a(1)=(3.0d0+2.0d0*SQRT(3.0d0))/12.0d0
-      MISBI%a(2,2)%a(1)=1.0d0/4.0d0
-      MISBI%a(3,1)%a(1)=1.0d0/2.0d0
-      MISBI%a(3,2)%a(1)=1.0d0/2.0d0
+      MISBI%aF(1,1)%a(1)=1.0d0/4.0d0
+      MISBI%aF(1,2)%a(1)=(3.0d0-2.0d0*SQRT(3.0d0))/12.0d0
+      MISBI%aF(2,1)%a(1)=(3.0d0+2.0d0*SQRT(3.0d0))/12.0d0
+      MISBI%aF(2,2)%a(1)=1.0d0/4.0d0
+      MISBI%aF(3,1)%a(1)=1.0d0/2.0d0
+      MISBI%aF(3,2)%a(1)=1.0d0/2.0d0
       MISBI%dt(1)=(3-SQRT(3.0d0))/6.0d0
       MISBI%dt(2)=(3+SQRT(3.0d0))/6.0d0
       MISBI%dt(3)=1.0d0
@@ -438,20 +444,20 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=1
       CALL AllocateMISBI
       MISBI%sPhi=1
-      MISBI%a(2,1)%a(1)=1.0d0/2.0d0
-      MISBI%a(3,1)%a(1)=-1.0d0/6.0d0
-      MISBI%a(3,2)%a(1)=2.0d0/3.0d0
-      MISBI%a(4,1)%a(1)=1.0d0/3.0d0
-      MISBI%a(4,2)%a(1)=-1.0d0/3.0d0
-      MISBI%a(4,3)%a(1)=1.0d0
-      MISBI%a(5,1)%a(1)=1.0d0/6.0d0
-      MISBI%a(5,2)%a(1)=1.0d0/3.0d0
-      MISBI%a(5,3)%a(1)=1.0d0/3.0d0
-      MISBI%a(5,4)%a(1)=1.0d0/6.0d0
+      MISBI%aF(2,1)%a(1)=1.0d0/2.0d0
+      MISBI%aF(3,1)%a(1)=-1.0d0/6.0d0
+      MISBI%aF(3,2)%a(1)=2.0d0/3.0d0
+      MISBI%aF(4,1)%a(1)=1.0d0/3.0d0
+      MISBI%aF(4,2)%a(1)=-1.0d0/3.0d0
+      MISBI%aF(4,3)%a(1)=1.0d0
+      MISBI%aF(5,1)%a(1)=1.0d0/6.0d0
+      MISBI%aF(5,2)%a(1)=1.0d0/3.0d0
+      MISBI%aF(5,3)%a(1)=1.0d0/3.0d0
+      MISBI%aF(5,4)%a(1)=1.0d0/6.0d0
       DO j=1,MISBI%nStage
-        MISBI%a(5,j)%a=MISBI%a(5,j)%a-MISBI%a(4,j)%a
-        MISBI%a(4,j)%a=MISBI%a(4,j)%a-MISBI%a(3,j)%a
-        MISBI%a(3,j)%a=MISBI%a(3,j)%a-MISBI%a(2,j)%a
+        MISBI%aF(5,j)%a=MISBI%aF(5,j)%a-MISBI%aF(4,j)%a
+        MISBI%aF(4,j)%a=MISBI%aF(4,j)%a-MISBI%aF(3,j)%a
+        MISBI%aF(3,j)%a=MISBI%aF(3,j)%a-MISBI%aF(2,j)%a
       END DO
       MISBI%c=0.0d0
       MISBI%c(2)=1.0d0/2.0d0
@@ -474,16 +480,16 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=1
       CALL AllocateMISBI
       MISBI%sPhi=1
-      MISBI%a(2,1)%a(1)=  0.38758444641450318     
-      MISBI%a(3,1)%a(1)=  -2.5318448354142823E-002
-      MISBI%a(3,2)%a(1)=  0.38668943087310403     
-      MISBI%a(4,1)%a(1)=  0.20899983523553325     
-      MISBI%a(4,2)%a(1)= -0.45856648476371231     
-      MISBI%a(4,3)%a(1)=  0.43423187573425748     
-      MISBI%a(5,1)%a(1)= -0.10048822195663100     
-      MISBI%a(5,2)%a(1)= -0.46186171956333327     
-      MISBI%a(5,3)%a(1)=  0.83045062122462809     
-      MISBI%a(5,4)%a(1)=  0.27014914900250392     
+      MISBI%aF(2,1)%a(1)=  0.38758444641450318     
+      MISBI%aF(3,1)%a(1)=  -2.5318448354142823E-002
+      MISBI%aF(3,2)%a(1)=  0.38668943087310403     
+      MISBI%aF(4,1)%a(1)=  0.20899983523553325     
+      MISBI%aF(4,2)%a(1)= -0.45856648476371231     
+      MISBI%aF(4,3)%a(1)=  0.43423187573425748     
+      MISBI%aF(5,1)%a(1)= -0.10048822195663100     
+      MISBI%aF(5,2)%a(1)= -0.46186171956333327     
+      MISBI%aF(5,3)%a(1)=  0.83045062122462809     
+      MISBI%aF(5,4)%a(1)=  0.27014914900250392     
       MISBI%c(2)=  0.38758444641450318     
       MISBI%c(3)=  0.61521685655017821     
       MISBI%c(4)=  0.23254717315441453     
@@ -503,7 +509,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE ('MISBI54_IIB1')
@@ -512,21 +518,21 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       CALL AllocateMISBI
       MISBI%sPhi=1
 
-      MISBI%a(2,1)%a(1)=  0.219579314792533d0
-      MISBI%a(3,1)%a(1)= -0.032864918414060d0
-      MISBI%a(3,2)%a(1)=  0.634699918767414d0
-      MISBI%a(4,1)%a(1)= -0.241761887431829d0
-      MISBI%a(4,2)%a(1)= -0.120631540663984d0
-      MISBI%a(4,3)%a(1)=  0.374686620841487d0
-      MISBI%a(5,1)%a(1)= -0.058474324094343d0
-      MISBI%a(5,2)%a(1)=  0.351217252190521d0
-      MISBI%a(5,3)%a(1)=  0.309657030167295d0
-      MISBI%a(5,4)%a(1)=  0.168604799122988d0
-      MISBI%a(6,1)%a(1)= -0.056205055946158d0
-      MISBI%a(6,2)%a(1)= -0.068390330952311d0
-      MISBI%a(6,3)%a(1)= -0.086209210260269d0
-      MISBI%a(6,4)%a(1)=  0.034904705602768d0
-      MISBI%a(6,5)%a(1)=  0.448964988009822d0
+      MISBI%aF(2,1)%a(1)=  0.219579314792533d0
+      MISBI%aF(3,1)%a(1)= -0.032864918414060d0
+      MISBI%aF(3,2)%a(1)=  0.634699918767414d0
+      MISBI%aF(4,1)%a(1)= -0.241761887431829d0
+      MISBI%aF(4,2)%a(1)= -0.120631540663984d0
+      MISBI%aF(4,3)%a(1)=  0.374686620841487d0
+      MISBI%aF(5,1)%a(1)= -0.058474324094343d0
+      MISBI%aF(5,2)%a(1)=  0.351217252190521d0
+      MISBI%aF(5,3)%a(1)=  0.309657030167295d0
+      MISBI%aF(5,4)%a(1)=  0.168604799122988d0
+      MISBI%aF(6,1)%a(1)= -0.056205055946158d0
+      MISBI%aF(6,2)%a(1)= -0.068390330952311d0
+      MISBI%aF(6,3)%a(1)= -0.086209210260269d0
+      MISBI%aF(6,4)%a(1)=  0.034904705602768d0
+      MISBI%aF(6,5)%a(1)=  0.448964988009822d0
           
 
       MISBI%c(2)=  0.219579314792533d0
@@ -580,9 +586,65 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
+    CASE ('MRI-GARK-SDIRK2(1)2')
+    ! Roberts, Sarshar, Sandu SIAM J. Sci. Comput., 42, A1609-A1638, 2020.
+      WRITE(*,*) 'Method: MRI-GARK-SDIRK2(1)2'
+      MISBI%nStage=2
+      MISBI%nPhi=2
+      CALL AllocateMISBI
+      MISBI%sPhi(1)=0
+      MISBI%sPhi(2)=0
+      MISBI%sPhi(3)=2
+      MISBI%aF(3,1)%a(1)=5.0d0*SQRT(2.0d0)-6.0d0
+      MISBI%aF(3,1)%a(2)=12.0d0-9.0d0*SQRT(2.0d0)
+      MISBI%aF(3,2)%a(1)=-5.0d0*SQRT(2.0d0)+7.0d0
+      MISBI%aF(3,2)%a(2)=-MISBI%aF(3,1)%a(2)
+      MISBI%aS(1,1)=1.0d0-1.0d0/SQRT(2.0d0)
+      MISBI%aS(2,1)=1.0d0/SQRT(2.0d0)
+      MISBI%aS(2,2)=1.0d0-1.0d0/SQRT(2.0d0)
+    CASE ('MRI-GARK-SDIRK4(3)5')   
+    ! Roberts, Sarshar, Sandu SIAM J. Sci. Comput., 42, A1609-A1638, 2020.
+      WRITE(*,*) 'Method: MRI-GARK-SDIRK4(3)5'
+      MISBI%nStage=5
+      MISBI%nPhi=2
+      CALL AllocateMISBI
+      MISBI%sPhi(1)=0
+      MISBI%sPhi(2)=0
+      MISBI%sPhi(3)=0
+      MISBI%sPhi(4)=0
+      MISBI%sPhi(5)=0
+      MISBI%sPhi(6)=2
+      MISBI%aF(6,1)%a(1)=487.0d0/273.0d0
+      MISBI%aF(6,1)%a(2)=-142.0d0/65.0d0
+      MISBI%aF(6,2)%a(1)=-475.0d0/3276.0d0
+      MISBI%aF(6,2)%a(2)=-125.0d0/182.0d0
+      MISBI%aF(6,3)%a(1)=99.0d0/56.0d0
+      MISBI%aF(6,3)%a(2)=297.0d0/140.0d0
+      MISBI%aF(6,4)%a(1)=-575.0d0/252.0d0
+      MISBI%aF(6,4)%a(2)=0.0d0
+      MISBI%aF(6,5)%a(1)=-1.0d0/8.0d0
+      MISBI%aF(6,5)%a(2)=3.0d0/4.0d0
+
+      MISBI%aS(1,1)=1.0d0/4.0d0
+      MISBI%aS(2,1)=13.0d0/20.0d0
+      MISBI%aS(2,2)=1.0d0/4.0d0
+      MISBI%aS(3,1)=580.0d0/1287.0d0
+      MISBI%aS(3,2)=-175.0d0/5148.0d0
+      MISBI%aS(3,3)=1.0d0/4.0d0
+      MISBI%aS(4,1)=12698.0d0/37375.0d0
+      MISBI%aS(4,2)=-201.0d0/2990.0d0
+      MISBI%aS(4,3)=891.0d0/11500.0d0
+      MISBI%aS(4,4)=1.0d0/4.0d0
+      MISBI%aS(5,1)=944.0d0/1365.0d0
+      MISBI%aS(5,2)=-400.0d0/819.0d0
+      MISBI%aS(5,3)=99.0d0/35.0d0
+      MISBI%aS(5,4)=-575.0d0/252
+      MISBI%aS(5,5)=1.0d0/4.0d0
+
+
     CASE ('MRI-GARK-ERK33')
     ! Sandu
       WRITE(*,*) 'Method: MRI-GARK-ERK33'
@@ -593,17 +655,17 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
     ! MISBI%sPhi(3)=2
     ! MISBI%sPhi(4)=2
       delta=-0.5d0
-      MISBI%a(2,1)%a(1)=1.0d0/3.0d0
-      MISBI%a(3,1)%a(1)=(-6.0d0*delta-7.0d0)/12.0d0
-      MISBI%a(3,2)%a(1)=(6.0d0*delta+11.0d0)/12.0d0
-      MISBI%a(4,2)%a(1)=(6.0d0*delta-5.0d0)/12.0d0
-      MISBI%a(4,3)%a(1)=(3.0d0-2.0d0*delta)/4.0d0
+      MISBI%aF(2,1)%a(1)=1.0d0/3.0d0
+      MISBI%aF(3,1)%a(1)=(-6.0d0*delta-7.0d0)/12.0d0
+      MISBI%aF(3,2)%a(1)=(6.0d0*delta+11.0d0)/12.0d0
+      MISBI%aF(4,2)%a(1)=(6.0d0*delta-5.0d0)/12.0d0
+      MISBI%aF(4,3)%a(1)=(3.0d0-2.0d0*delta)/4.0d0
 
-      MISBI%a(3,1)%a(2)=(2.0d0*delta+1.0d0)/2.0d0
-      MISBI%a(3,2)%a(2)=-(2.0d0*delta+1.0d0)/2.0d0
-      MISBI%a(4,1)%a(2)=0.5d0
-      MISBI%a(4,2)%a(2)=-(2.0d0*delta+1.0d0)/2.0d0
-      MISBI%a(4,3)%a(2)=delta
+      MISBI%aF(3,1)%a(2)=(2.0d0*delta+1.0d0)/2.0d0
+      MISBI%aF(3,2)%a(2)=-(2.0d0*delta+1.0d0)/2.0d0
+      MISBI%aF(4,1)%a(2)=0.5d0
+      MISBI%aF(4,2)%a(2)=-(2.0d0*delta+1.0d0)/2.0d0
+      MISBI%aF(4,3)%a(2)=delta
 
       MISBI%c=0.0d0
       MISBI%c(2)=1.0d0/3.0d0
@@ -640,7 +702,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE ('CKRK54')
@@ -666,7 +728,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
 
@@ -708,7 +770,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
 
@@ -751,7 +813,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE ('TSRKC73')
@@ -781,7 +843,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
 
@@ -814,7 +876,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
 
@@ -847,7 +909,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE ('SHRK64')
@@ -875,7 +937,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
 
@@ -906,7 +968,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE ('HALERK64')
@@ -933,7 +995,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
 
@@ -976,7 +1038,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE ('BPRKO73')
@@ -1006,7 +1068,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE ('BBBRKNL64')
@@ -1034,7 +1096,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE ('MRI-GARK-ERK45a')
@@ -1044,44 +1106,44 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=2
       CALL AllocateMISBI
 
-      MISBI%a(2,1)%a(1)=1.0d0/5.0d0
+      MISBI%aF(2,1)%a(1)=1.0d0/5.0d0
 
-      MISBI%a(3,1)%a(1)=-53.0d0/16.0d0
-      MISBI%a(3,2)%a(1)=281.0d0/80.0d0
+      MISBI%aF(3,1)%a(1)=-53.0d0/16.0d0
+      MISBI%aF(3,2)%a(1)=281.0d0/80.0d0
 
-      MISBI%a(4,1)%a(1)=-36562993.0d0/71394880.0d0
-      MISBI%a(4,2)%a(1)=34903117.0d0/17848720.0d0
-      MISBI%a(4,3)%a(1)=-88770499.0d0/71394880.0d0
+      MISBI%aF(4,1)%a(1)=-36562993.0d0/71394880.0d0
+      MISBI%aF(4,2)%a(1)=34903117.0d0/17848720.0d0
+      MISBI%aF(4,3)%a(1)=-88770499.0d0/71394880.0d0
 
-      MISBI%a(5,1)%a(1)=-7631593.0d0/71394880.0d0
-      MISBI%a(5,2)%a(1)=-166232021.0d0/35697440.0d0
-      MISBI%a(5,3)%a(1)=6068517.0d0/1519040.0d0
-      MISBI%a(5,4)%a(1)=8644289.0d0/8924360.0d0
+      MISBI%aF(5,1)%a(1)=-7631593.0d0/71394880.0d0
+      MISBI%aF(5,2)%a(1)=-166232021.0d0/35697440.0d0
+      MISBI%aF(5,3)%a(1)=6068517.0d0/1519040.0d0
+      MISBI%aF(5,4)%a(1)=8644289.0d0/8924360.0d0
 
-      MISBI%a(6,1)%a(1)=277061.0d0/303808.0d0
-      MISBI%a(6,2)%a(1)=-209323.0d0/1139280.0d0
-      MISBI%a(6,3)%a(1)=-1360217.0d0/1139280.0d0
-      MISBI%a(6,4)%a(1)=-148789.0d0/56964.0d0
-      MISBI%a(6,5)%a(1)=147889.0d0/45120.0d0
+      MISBI%aF(6,1)%a(1)=277061.0d0/303808.0d0
+      MISBI%aF(6,2)%a(1)=-209323.0d0/1139280.0d0
+      MISBI%aF(6,3)%a(1)=-1360217.0d0/1139280.0d0
+      MISBI%aF(6,4)%a(1)=-148789.0d0/56964.0d0
+      MISBI%aF(6,5)%a(1)=147889.0d0/45120.0d0
 
 
-      MISBI%a(3,1)%a(2)=503.0d0/80.0d0
-      MISBI%a(3,2)%a(2)=-503.0d0/80.0d0
+      MISBI%aF(3,1)%a(2)=503.0d0/80.0d0
+      MISBI%aF(3,2)%a(2)=-503.0d0/80.0d0
 
-      MISBI%a(4,1)%a(2)=-1365537.0d0/35697440.0d0
-      MISBI%a(4,2)%a(2)=4963773.0d0/7139488.0d0
-      MISBI%a(4,3)%a(2)=-1465833.0d0/2231090.0d0
+      MISBI%aF(4,1)%a(2)=-1365537.0d0/35697440.0d0
+      MISBI%aF(4,2)%a(2)=4963773.0d0/7139488.0d0
+      MISBI%aF(4,3)%a(2)=-1465833.0d0/2231090.0d0
 
-      MISBI%a(5,1)%a(2)=66974357.0d0/35697440.0d0
-      MISBI%a(5,2)%a(2)=21445367.0d0/7139488.0d0
-      MISBI%a(5,3)%a(2)=-3.0d0
-      MISBI%a(5,4)%a(2)=-8388609.0d0/4462180.0d0
+      MISBI%aF(5,1)%a(2)=66974357.0d0/35697440.0d0
+      MISBI%aF(5,2)%a(2)=21445367.0d0/7139488.0d0
+      MISBI%aF(5,3)%a(2)=-3.0d0
+      MISBI%aF(5,4)%a(2)=-8388609.0d0/4462180.0d0
 
-      MISBI%a(6,1)%a(2)=-18227.0d0/7520.0d0
-      MISBI%a(6,2)%a(2)=2.0d0
-      MISBI%a(6,3)%a(2)=1.0d0
-      MISBI%a(6,4)%a(2)=5.0d0
-      MISBI%a(6,5)%a(2)=-41933.0d0/7520.0d0
+      MISBI%aF(6,1)%a(2)=-18227.0d0/7520.0d0
+      MISBI%aF(6,2)%a(2)=2.0d0
+      MISBI%aF(6,3)%a(2)=1.0d0
+      MISBI%aF(6,4)%a(2)=5.0d0
+      MISBI%aF(6,5)%a(2)=-41933.0d0/7520.0d0
 
       MISBI%c=0.0d0
       MISBI%c(2)=1.0d0/5.0d0
@@ -1108,22 +1170,22 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=1
       CALL AllocateMISBI
       MISBI%sPhi=1
-      MISBI%a(2,1)%a(1)=1.0d0/2.0d0
+      MISBI%aF(2,1)%a(1)=1.0d0/2.0d0
 
-      MISBI%a(3,2)%a(1)=1.0d0/2.0d0
+      MISBI%aF(3,2)%a(1)=1.0d0/2.0d0
 
-      MISBI%a(4,1)%a(1)=-1.0d0/2.0d0
-      MISBI%a(4,3)%a(1)=1.0d0
+      MISBI%aF(4,1)%a(1)=-1.0d0/2.0d0
+      MISBI%aF(4,3)%a(1)=1.0d0
 
-      MISBI%a(5,1)%a(1)=1.0d0/4.0d0
-      MISBI%a(5,2)%a(1)=1.0d0/6.0d0
-      MISBI%a(5,3)%a(1)=1.0d0/6.0d0
-      MISBI%a(5,4)%a(1)=-1.0d0/12.0d0
+      MISBI%aF(5,1)%a(1)=1.0d0/4.0d0
+      MISBI%aF(5,2)%a(1)=1.0d0/6.0d0
+      MISBI%aF(5,3)%a(1)=1.0d0/6.0d0
+      MISBI%aF(5,4)%a(1)=-1.0d0/12.0d0
 
-      MISBI%a(6,1)%a(1)=-1.0d0/12.0d0
-      MISBI%a(6,2)%a(1)=1.0d0/6.0d0
-      MISBI%a(6,3)%a(1)=1.0d0/6.0d0
-      MISBI%a(6,4)%a(1)=1.0d0/4.0d0
+      MISBI%aF(6,1)%a(1)=-1.0d0/12.0d0
+      MISBI%aF(6,2)%a(1)=1.0d0/6.0d0
+      MISBI%aF(6,3)%a(1)=1.0d0/6.0d0
+      MISBI%aF(6,4)%a(1)=1.0d0/4.0d0
 
       MISBI%d(4,2)=1.0d0
       MISBI%d(6,5)=1.0d0
@@ -1140,16 +1202,16 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=1
       CALL AllocateMISBI
       MISBI%sPhi=1
-      MISBI%a(2,1)%a(1)=  0.13629647842266179     
-      MISBI%a(3,1)%a(1)=  0.28046239897933556     
-      MISBI%a(3,2)%a(1)= -1.60351333596248577E-002
-      MISBI%a(4,1)%a(1)=  0.90471335520843155     
-      MISBI%a(4,2)%a(1)=  -1.0401118315403626     
-      MISBI%a(4,3)%a(1)=  0.65233756348866223     
-      MISBI%a(5,1)%a(1)=  6.71969845545695721E-002
-      MISBI%a(5,2)%a(1)= -0.36562186260961194     
-      MISBI%a(5,3)%a(1)= -0.15486147083521187     
-      MISBI%a(5,4)%a(1)=  0.97036244446880304     
+      MISBI%aF(2,1)%a(1)=  0.13629647842266179     
+      MISBI%aF(3,1)%a(1)=  0.28046239897933556     
+      MISBI%aF(3,2)%a(1)= -1.60351333596248577E-002
+      MISBI%aF(4,1)%a(1)=  0.90471335520843155     
+      MISBI%aF(4,2)%a(1)=  -1.0401118315403626     
+      MISBI%aF(4,3)%a(1)=  0.65233756348866223     
+      MISBI%aF(5,1)%a(1)=  6.71969845545695721E-002
+      MISBI%aF(5,2)%a(1)= -0.36562186260961194     
+      MISBI%aF(5,3)%a(1)= -0.15486147083521187     
+      MISBI%aF(5,4)%a(1)=  0.97036244446880304     
       MISBI%c=0.0d0
       MISBI%c(2)=  0.13629647842266179     
       MISBI%c(3)=  0.48155366095621122     
@@ -1172,7 +1234,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE ('MISBIC4')  
@@ -1180,25 +1242,25 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nStage=5
       MISBI%nPhi=1
       CALL AllocateMISBI
-      MISBI%a(2,1)%a(1)=0.5d0
+      MISBI%aF(2,1)%a(1)=0.5d0
 
-      MISBI%a(3,1)%a(1)=0.0d0
-      MISBI%a(3,2)%a(1)=0.5d0
+      MISBI%aF(3,1)%a(1)=0.0d0
+      MISBI%aF(3,2)%a(1)=0.5d0
 
-      MISBI%a(4,1)%a(1)=-0.5d0
-      MISBI%a(4,2)%a(1)=0.0d0
-      MISBI%a(4,3)%a(1)=1.0d0
+      MISBI%aF(4,1)%a(1)=-0.5d0
+      MISBI%aF(4,2)%a(1)=0.0d0
+      MISBI%aF(4,3)%a(1)=1.0d0
 
-      MISBI%a(5,1)%a(1)=0.25d0
-      MISBI%a(5,2)%a(1)=1.0d0/6.0d0
-      MISBI%a(5,3)%a(1)=1.0d0/6.0d0
-      MISBI%a(5,4)%a(1)=-1.0d0/12.0d0
+      MISBI%aF(5,1)%a(1)=0.25d0
+      MISBI%aF(5,2)%a(1)=1.0d0/6.0d0
+      MISBI%aF(5,3)%a(1)=1.0d0/6.0d0
+      MISBI%aF(5,4)%a(1)=-1.0d0/12.0d0
 
-      MISBI%a(6,1)%a(1)=-1.0d0/12.0d0
-      MISBI%a(6,2)%a(1)=1.0d0/6.0d0
-      MISBI%a(6,3)%a(1)=1.0d0/6.0d0
-      MISBI%a(6,4)%a(1)=0.25d0
-      MISBI%a(6,5)%a(1)=0.0d0
+      MISBI%aF(6,1)%a(1)=-1.0d0/12.0d0
+      MISBI%aF(6,2)%a(1)=1.0d0/6.0d0
+      MISBI%aF(6,3)%a(1)=1.0d0/6.0d0
+      MISBI%aF(6,4)%a(1)=0.25d0
+      MISBI%aF(6,5)%a(1)=0.0d0
 
       MISBI%c=0.0d0
       MISBI%d=0.0d0
@@ -1209,7 +1271,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE ('MISBIWS3')  
@@ -1217,23 +1279,23 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=3
       CALL AllocateMISBI
       MISBI%sPhi=0
-      MISBI%a(2,1)%a(1)=0.5d0
+      MISBI%aF(2,1)%a(1)=0.5d0
       MISBI%sPhi(2)=1
 
-      MISBI%a(3,1)%a(1)=-40.0d0 
-      MISBI%a(3,1)%a(2)=78.0d0
-      MISBI%a(3,2)%a(1)=41.0d0
-      MISBI%a(3,2)%a(2)=-78.0d0
+      MISBI%aF(3,1)%a(1)=-40.0d0 
+      MISBI%aF(3,1)%a(2)=78.0d0
+      MISBI%aF(3,2)%a(1)=41.0d0
+      MISBI%aF(3,2)%a(2)=-78.0d0
       MISBI%sPhi(3)=2
 
-      MISBI%a(4,1)%a(1)=1.0d0/3.0d0
-      MISBI%a(4,1)%a(2)=-1.0d0
-      MISBI%a(4,1)%a(3)=1.0d0
-      MISBI%a(4,2)%a(1)=4.0d0/3.0d0
-      MISBI%a(4,2)%a(3)=-2.0d0
-      MISBI%a(4,3)%a(1)=-2.0d0/3.0d0
-      MISBI%a(4,3)%a(2)=1.0d0
-      MISBI%a(4,3)%a(3)=1.0d0
+      MISBI%aF(4,1)%a(1)=1.0d0/3.0d0
+      MISBI%aF(4,1)%a(2)=-1.0d0
+      MISBI%aF(4,1)%a(3)=1.0d0
+      MISBI%aF(4,2)%a(1)=4.0d0/3.0d0
+      MISBI%aF(4,2)%a(3)=-2.0d0
+      MISBI%aF(4,3)%a(1)=-2.0d0/3.0d0
+      MISBI%aF(4,3)%a(2)=1.0d0
+      MISBI%aF(4,3)%a(3)=1.0d0
       MISBI%sPhi(4)=3
 
       MISBI%c(1)=0.0d0
@@ -1243,7 +1305,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
 
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE('MISTvdA') 
@@ -1252,12 +1314,12 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       CALL AllocateMISBI
       MISBI%sPhi=1
 
-      MISBI%a(2,1)%a(1)=  0.66666666666666696d0
-      MISBI%a(3,1)%a(1)= -0.28247174703488398d0
-      MISBI%a(3,2)%a(1)=  0.44444444444444398d0
-      MISBI%a(4,1)%a(1)= -0.31198081960042401d0
-      MISBI%a(4,2)%a(1)=  0.18082737579913699d0
-      MISBI%a(4,3)%a(1)=  0.56250000000000000d0
+      MISBI%aF(2,1)%a(1)=  0.66666666666666696d0
+      MISBI%aF(3,1)%a(1)= -0.28247174703488398d0
+      MISBI%aF(3,2)%a(1)=  0.44444444444444398d0
+      MISBI%aF(4,1)%a(1)= -0.31198081960042401d0
+      MISBI%aF(4,2)%a(1)=  0.18082737579913699d0
+      MISBI%aF(4,3)%a(1)=  0.56250000000000000d0
 
       MISBI%c(2)=  0.66666666666666696d0     
       MISBI%c(3)=  0.66666666666666685d0     
@@ -1272,7 +1334,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%g(4,3)= -0.2459300561692391d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
     CASE('MISTvdB') 
@@ -1281,12 +1343,12 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       CALL AllocateMISBI
       MISBI%sPhi=1
 
-      MISBI%a(2,1)%a(1)=  0.66666666666666696     
-      MISBI%a(3,1)%a(1)= -0.25492859100078202     
-      MISBI%a(3,2)%a(1)=  0.44444444444444398     
-      MISBI%a(4,1)%a(1)= -0.26452517179288798     
-      MISBI%a(4,2)%a(1)=  0.11424084424766399     
-      MISBI%a(4,3)%a(1)=  0.56250000000000000     
+      MISBI%aF(2,1)%a(1)=  0.66666666666666696     
+      MISBI%aF(3,1)%a(1)= -0.25492859100078202     
+      MISBI%aF(3,2)%a(1)=  0.44444444444444398     
+      MISBI%aF(4,1)%a(1)= -0.26452517179288798     
+      MISBI%aF(4,2)%a(1)=  0.11424084424766399     
+      MISBI%aF(4,3)%a(1)=  0.56250000000000000     
       MISBI%c(2)=  0.66666666666666696     
       MISBI%c(3)=  0.66666666666666685     
       MISBI%c(4)=   1.0000000000000009     
@@ -1299,7 +1361,7 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%dt=0.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
 
@@ -1309,28 +1371,28 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%nPhi=3
       CALL AllocateMISBI
 
-      MISBI%a(2,1)%a(1)=0.5d0
+      MISBI%aF(2,1)%a(1)=0.5d0
 
-      MISBI%a(3,1)%a(1)= 0.5d0
-      MISBI%a(3,1)%a(2)=-1.0d0
-      MISBI%a(3,2)%a(2)= 1.0d0
+      MISBI%aF(3,1)%a(1)= 0.5d0
+      MISBI%aF(3,1)%a(2)=-1.0d0
+      MISBI%aF(3,2)%a(2)= 1.0d0
 
-      MISBI%a(4,1)%a(1)= 1.0d0
-      MISBI%a(4,1)%a(2)=-2.0d0
-      MISBI%a(4,3)%a(2)= 2.0d0
+      MISBI%aF(4,1)%a(1)= 1.0d0
+      MISBI%aF(4,1)%a(2)=-2.0d0
+      MISBI%aF(4,3)%a(2)= 2.0d0
 
-      MISBI%a(5,1)%a(1)= 1.0d0
-      MISBI%a(5,1)%a(2)=-3.0d0
-      MISBI%a(5,1)%a(3)= 4.0d0
-      MISBI%a(5,2)%a(1)= 0.0d0
-      MISBI%a(5,2)%a(2)= 2.0d0
-      MISBI%a(5,2)%a(3)=-4.0d0
-      MISBI%a(5,3)%a(1)= 0.0d0
-      MISBI%a(5,3)%a(2)= 2.0d0
-      MISBI%a(5,3)%a(3)=-4.0d0
-      MISBI%a(5,4)%a(1)= 0.0d0
-      MISBI%a(5,4)%a(2)=-1.0d0
-      MISBI%a(5,4)%a(3)= 4.0d0
+      MISBI%aF(5,1)%a(1)= 1.0d0
+      MISBI%aF(5,1)%a(2)=-3.0d0
+      MISBI%aF(5,1)%a(3)= 4.0d0
+      MISBI%aF(5,2)%a(1)= 0.0d0
+      MISBI%aF(5,2)%a(2)= 2.0d0
+      MISBI%aF(5,2)%a(3)=-4.0d0
+      MISBI%aF(5,3)%a(1)= 0.0d0
+      MISBI%aF(5,3)%a(2)= 2.0d0
+      MISBI%aF(5,3)%a(3)=-4.0d0
+      MISBI%aF(5,4)%a(1)= 0.0d0
+      MISBI%aF(5,4)%a(2)=-1.0d0
+      MISBI%aF(5,4)%a(3)= 4.0d0
 
       MISBI%c(1)=0.0d0
       MISBI%c(2)=0.5d0
@@ -1339,14 +1401,14 @@ SUBROUTINE MISBIMethod(Method,MISBI,pMax)
       MISBI%c(5)=1.0d0
       DO i=2,MISBI%nStage+1
         DO j=1,i-1
-          MISBI%dt(i)=MISBI%dt(i)+MISBI%a(i,j)%a(1)
+          MISBI%dt(i)=MISBI%dt(i)+MISBI%aF(i,j)%a(1)
         END DO
       END DO
       DO i=2,MISBI%nStage+1
         Fac=1.0d0
         DO k=1,MISBI%nPhi
           DO j=1,i-1
-            MISBI%a(i,j)%a(k)=MISBI%a(i,j)%a(k)*Fac
+            MISBI%aF(i,j)%a(k)=MISBI%aF(i,j)%a(k)*Fac
           END DO
 !         Fac=Fac*MISBI%dt(i)/FLOAT(k)
           Fac=Fac/FLOAT(k)
@@ -1365,14 +1427,14 @@ SUBROUTINE LowStorageToMISBI(A,B,MISBI)
     MISBI%d(i+1,i)=1.0d0
   END DO  
   DO i=1,MISBI%nStage
-    MISBI%a(i+1,i)%a(1)=B(i)
+    MISBI%aF(i+1,i)%a(1)=B(i)
     DO j=i-1,1,-1
-      MISBI%a(i+1,j)%a(1)=A(j+1)*MISBI%a(i+1,j+1)%a(1)+B(j)
+      MISBI%aF(i+1,j)%a(1)=A(j+1)*MISBI%aF(i+1,j+1)%a(1)+B(j)
     END DO
   END DO
   DO i=MISBI%nStage,1,-1
     DO j=1,MISBI%nStage
-      MISBI%a(i+1,j)%a=MISBI%a(i+1,j)%a-MISBI%a(i,j)%a
+      MISBI%aF(i+1,j)%a=MISBI%aF(i+1,j)%a-MISBI%aF(i,j)%a
     END DO  
   END DO  
 END SUBROUTINE LowStorageToMISBI
@@ -1387,11 +1449,13 @@ SUBROUTINE AllocateMISBI
   ALLOCATE(MISBI%dt(MISBI%nStage+1))
   MISBI%dt=0.0d0
   ALLOCATE(MISBI%sPhi(MISBI%nStage+1))
-  ALLOCATE(MISBI%a(MISBI%nStage+1,MISBI%nStage))
+  ALLOCATE(MISBI%aS(MISBI%nStage+1,MISBI%nStage))
+  MISBI%aS=0.0d0
+  ALLOCATE(MISBI%aF(MISBI%nStage+1,MISBI%nStage))
   DO i=1,MISBI%nStage+1
     DO j=1,MISBI%nStage
-      ALLOCATE(MISBI%a(i,j)%a(MISBI%nPhi))
-      MISBI%a(i,j)%a=0.0d0
+      ALLOCATE(MISBI%aF(i,j)%a(MISBI%nPhi))
+      MISBI%aF(i,j)%a=0.0d0
     END DO 
   END DO 
 END SUBROUTINE AllocateMISBI

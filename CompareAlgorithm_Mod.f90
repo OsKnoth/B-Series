@@ -41,7 +41,7 @@ SUBROUTINE OrderWenschKnoth(MISBI,Phi2MISBI,Exact,pMax)
   INTEGER :: i,j,k
 
   Stages=MISBI%nStage
-  beta=MISBI%a
+  beta=MISBI%aF
   betaTemp=0.0d0
   alpha=0.0d0
   g=0.0d0
@@ -663,7 +663,7 @@ SUBROUTINE OrderConditionsOwren(MISBI,Phi2MISBI,pMax)
         lFac=kFac
         DO l=1,sPhi(i)
           lFac=lFac*FLOAT(l+k-1)
-          alpha(i,j,k)=alpha(i,j,k)+MISBI%a(i,j)%a(l)/lFac
+          alpha(i,j,k)=alpha(i,j,k)+MISBI%aS(i,j)%a(l)/lFac
         END DO
         kFac=kFac/MISBI%c(i)
       END DO
@@ -681,7 +681,7 @@ SUBROUTINE OrderConditionsOwren(MISBI,Phi2MISBI,pMax)
       lFac=kFac
       DO l=1,sPhi(nS+1)
         lFac=lfac*FLOAT(l+k-1)
-        beta(j,k)=beta(j,k)+MISBI%a(ns+1,j)%a(l)/lFac
+        beta(j,k)=beta(j,k)+MISBI%aF(ns+1,j)%a(l)/lFac
       END DO
     END DO
   END DO

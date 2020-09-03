@@ -1,0 +1,30 @@
+&Control
+dInsert=.FALSE.
+gInsert=.FALSE.
+pMaximum=5
+! MISName
+! MISName='MISBIC4'
+! MISName='ExSym'
+! MISName='Implicit2'
+! MISName='Gauss2'
+! MISName='MRI-GARK-ERK33'
+! MISName='MRI-GARK-ERK45a'
+! MISName='MISBIEB4'
+! MISName='ExRK2a'
+! MISName='KWRK43'
+! MISName='OwrenRK4'
+! MISName='ExRK3'
+! MISName='MISBI4'
+! MISName='MISBI4_4'
+! MISName='MISBI54_IIB1'
+! MISName='MISTvdB'
+! MISName='MISTvdA'
+! MISName='BWRRK33'
+! MISName='TSRKF84'
+! MISName='YRK1351'
+! MISName='CKRK54'
+! MISNAME='MRI-GARK-SDIRK2(1)2'
+  MISNAME='MRI-GARK-SDIRK4(3)5'
+nStageSym=4
+nPhiSym=1
+/END
